@@ -15,8 +15,9 @@ To get started, you'll need to install OpenAIExtensions via NuGet Package Manage
 dotnet add package OpenAIExtensions
 
 
-Creating an AIConversationManager Instance
-Now, let's create an instance of the AIConversationManager class in your test or application code. This manager orchestrates the conversation between users and the AI system.
+## AIConversationManager
+Now, let's create an instance of the AIConversationManager class in your test or application code. 
+This manager orchestrates the conversation between users and the AI system.
 
 // Instantiate AIConversationManager with necessary dependencies
 var configuration = new ConfigurationBuilder()
@@ -50,7 +51,4 @@ var systemMessage = @"
 var response = await aiConversationManager.ProcessConversationAsync(history, systemMessage);
 
 response => The weather in Skopje today is partly cloudy with a high of 15°C.
-
-
-
 
