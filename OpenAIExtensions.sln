@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenAIExtensions.Tests", "OpenAIExtensions.Tests\OpenAIExtensions.Tests.csproj", "{EFD80E39-07A3-41E3-8129-97DA4430D858}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenAIExtensions.Plugins", "OpenAIExtensions.Plugins\OpenAIExtensions.Plugins.csproj", "{022F0101-A490-40E6-8DB8-31941F6BA788}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenAIExtensions", "Core\OpenAIExtensions.csproj", "{F8EF3F54-231B-4663-A82F-72F856BD1E00}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EFD80E39-07A3-41E3-8129-97DA4430D858}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFD80E39-07A3-41E3-8129-97DA4430D858}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFD80E39-07A3-41E3-8129-97DA4430D858}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFD80E39-07A3-41E3-8129-97DA4430D858}.Release|Any CPU.Build.0 = Release|Any CPU
+		{022F0101-A490-40E6-8DB8-31941F6BA788}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{022F0101-A490-40E6-8DB8-31941F6BA788}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{022F0101-A490-40E6-8DB8-31941F6BA788}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{022F0101-A490-40E6-8DB8-31941F6BA788}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8EF3F54-231B-4663-A82F-72F856BD1E00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8EF3F54-231B-4663-A82F-72F856BD1E00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8EF3F54-231B-4663-A82F-72F856BD1E00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8EF3F54-231B-4663-A82F-72F856BD1E00}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {500032E8-0A63-4904-A9AF-7ECA05785416}
+	EndGlobalSection
+EndGlobal
