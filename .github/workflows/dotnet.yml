@@ -13,6 +13,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    environment: Dev
 
     steps:
     - uses: actions/checkout@v3
@@ -26,3 +27,12 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+      env:
+        ASPNETCORE_OpenAI_Endpoint: ${{variables.OPENAI_ENDPOINT}}
+        ASPNETCORE_OpenAI_Key: ${{secrets.OPENAI_KEY}}
+        ASPNETCORE_OpenAI_AudioService_Endpoint: ${{variables.OPENAI_AUDIOSERVICE_ENDPOINT}}
+        ASPNETCORE_OpenAI_AudioService_Key: ${{secrets.OPENAI_AUDIOSERVICE_KEY}}
+        ASPNETCORE_OpenAI_ImageService_Endpoint: ${{variables.OPENAI_IMAGESERVICE_ENDPOINT}}
+        ASPNETCORE_OpenAI_ImageService_Key: ${{secrets.OPENAI_IMAGESERVICE_KEY}}
+        ASPNETCORE_OpenAI_TranslationService_Endpoint: ${{variables.OPENAI_TRANSLATIONSERVICE_ENDPOINT}}
+        ASPNETCORE_OpenAI_TranslationService_Key: ${{secrets.OPENAI_TRANSLATIONSERVICE_KEY}}
