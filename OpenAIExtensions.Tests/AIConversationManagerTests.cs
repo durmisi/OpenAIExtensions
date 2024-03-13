@@ -17,7 +17,7 @@ public class AIConversationManagerTests
     {
         var configuration = new ConfigurationBuilder()
             .AddJsonFile($"appsettings.json")
-            .AddEnvironmentVariables()
+            .AddEnvironmentVariables(prefix: "ASPNETCORE")
             .Build();
 
         var logger = LoggerFactory
