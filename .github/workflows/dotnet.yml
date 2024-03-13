@@ -14,7 +14,7 @@ jobs:
 
     runs-on: ubuntu-latest
     environment: Dev
-
+    
     steps:
     - uses: actions/checkout@v3
     - name: Setup .NET
@@ -26,10 +26,10 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build --verbosity normal  
       env:
         OpenAI__Endpoint: ${{vars.OPENAI_ENDPOINT}}
-        OpenAI_Key: ${{secrets.OPENAI_KEY}}
+        OpenAI__Key: ${{secrets.OPENAI_KEY}}
         OpenAI__AudioService__Endpoint: ${{vars.OPENAI_AUDIOSERVICE_ENDPOINT}}
         OpenAI__AudioService__Key: ${{secrets.OPENAI_AUDIOSERVICE_KEY}}
         OpenAI__ImageService__Endpoint: ${{vars.OPENAI_IMAGESERVICE_ENDPOINT}}
