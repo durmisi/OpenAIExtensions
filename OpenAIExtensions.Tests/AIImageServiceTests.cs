@@ -14,6 +14,7 @@ public class AIImageServiceTests
     {
         var configuration = new ConfigurationBuilder()
             .AddJsonFile($"appsettings.json")
+            .AddEnvironmentVariables()
             .Build();
 
         var logger = LoggerFactory

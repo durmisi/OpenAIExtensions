@@ -12,6 +12,7 @@ public class AIAudioServiceTests
     {
         var configuration = new ConfigurationBuilder()
             .AddJsonFile($"appsettings.json")
+            .AddEnvironmentVariables()
             .Build();
 
         var logger = LoggerFactory
