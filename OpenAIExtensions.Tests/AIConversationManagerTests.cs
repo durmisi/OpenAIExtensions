@@ -17,7 +17,7 @@ public class AIConversationManagerTests
     {
         var configuration = new ConfigurationBuilder()
             .AddJsonFile($"appsettings.json")
-            .AddEnvironmentVariables(prefix: "ASPNETCORE")
+            .AddEnvironmentVariables(prefix: "")
             .Build();
 
         var logger = LoggerFactory
@@ -25,8 +25,12 @@ public class AIConversationManagerTests
                 .CreateLogger<AIConversationManager>();
 
 
-        var endpoint = configuration.GetValue<string>("OpenAI:Endpoint")!;
-        var key = configuration.GetValue<string>("OpenAI:Key")!;
+        
+        var endpoint = configuration.GetValue<string>("OpenAI:Endpoint");
+        var key = configuration.GetValue<string>("OpenAI:Key");
+
+        outputHelper.WriteLine("E:" + endpoint);
+        outputHelper.WriteLine("K:" + key.Substring(0,1));
 
         var kernel = SematicKernelBuilder.Create()
             .AddAIChatCompletion(endpoint: endpoint, apiKey: key)

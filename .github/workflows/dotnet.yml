@@ -28,12 +28,12 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
       env:
-        ASPNETCORE__OpenAI__Endpoint: ${{vars.OPENAI_ENDPOINT}}
-        ASPNETCORE__OpenAI_Key: ${{secrets.OPENAI_KEY}}
-        ASPNETCORE__OpenAI__AudioService__Endpoint: ${{vars.OPENAI_AUDIOSERVICE_ENDPOINT}}
-        ASPNETCORE__OpenAI__AudioService__Key: ${{secrets.OPENAI_AUDIOSERVICE_KEY}}
-        ASPNETCORE__OpenAI__ImageService__Endpoint: ${{vars.OPENAI_IMAGESERVICE_ENDPOINT}}
-        ASPNETCORE__OpenAI__ImageService__Key: ${{secrets.OPENAI_IMAGESERVICE_KEY}}
-        ASPNETCORE__OpenAI__TranslationService__Endpoint: ${{vars.OPENAI_TRANSLATIONSERVICE_ENDPOINT}}
-        ASPNETCORE__OpenAI__TranslationService__Key: ${{secrets.OPENAI_TRANSLATIONSERVICE_KEY}}
+        OpenAI__Endpoint: ${{vars.OPENAI_ENDPOINT}}
+        OpenAI_Key: ${{secrets.OPENAI_KEY}}
+        OpenAI__AudioService__Endpoint: ${{vars.OPENAI_AUDIOSERVICE_ENDPOINT}}
+        OpenAI__AudioService__Key: ${{secrets.OPENAI_AUDIOSERVICE_KEY}}
+        OpenAI__ImageService__Endpoint: ${{vars.OPENAI_IMAGESERVICE_ENDPOINT}}
+        OpenAI__ImageService__Key: ${{secrets.OPENAI_IMAGESERVICE_KEY}}
+        OpenAI__TranslationService__Endpoint: ${{vars.OPENAI_TRANSLATIONSERVICE_ENDPOINT}}
+        OpenAI__TranslationService__Key: ${{secrets.OPENAI_TRANSLATIONSERVICE_KEY}}
     

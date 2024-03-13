@@ -14,7 +14,7 @@ namespace OpenAIExtensions.Tests
         {
             var configuration = new ConfigurationBuilder()
                 .AddJsonFile($"appsettings.json")
-                .AddEnvironmentVariables(prefix: "ASPNETCORE")
+                .AddEnvironmentVariables(prefix: "")
                 .Build();
 
             var aiBroker = new AIBroker(configuration);

@@ -14,7 +14,7 @@ public class AITranslationServiceTests
     {
         var configuration = new ConfigurationBuilder()
             .AddJsonFile($"appsettings.json")
-            .AddEnvironmentVariables(prefix: "ASPNETCORE")
+            .AddEnvironmentVariables(prefix: "")
             .Build();
 
         var logger = LoggerFactory
