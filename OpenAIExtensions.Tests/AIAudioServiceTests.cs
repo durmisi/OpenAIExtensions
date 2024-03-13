@@ -12,6 +12,7 @@ public class AIAudioServiceTests
     {
         var configuration = new ConfigurationBuilder()
             .AddJsonFile($"appsettings.json")
+            .AddJsonFile($"appsettings.Development.json", optional: true)
             .AddEnvironmentVariables(prefix: "")
             .Build();
 
