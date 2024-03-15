@@ -41,7 +41,7 @@ jobs:
       run: dotnet build --no-restore -c Release /p:Version=$VERSION
     
     - name: Test
-      run: dotnet test --no-build --verbosity normal  
+      run: dotnet test --no-build -c Release --verbosity normal  
       env:
         OpenAI__Endpoint: ${{vars.OPENAI_ENDPOINT}}
         OpenAI__Key: ${{secrets.OPENAI_KEY}}
