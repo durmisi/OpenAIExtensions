@@ -53,7 +53,7 @@ jobs:
         OpenAI__TranslationService__Key: ${{secrets.OPENAI_TRANSLATIONSERVICE_KEY}}
     
     - name: Pack
-      run: dotnet pack --output nupkgs --no-restore --no-build /p:PackageVersion=$VERSION
+      run: dotnet pack --output nupkgs --no-restore --no-build -c Release /p:PackageVersion=$VERSION
     
     - name: Push
       if: github.ref_type == 'tag' && startsWith(github.ref, 'refs/tags/v')

@@ -15,7 +15,7 @@
 			OpenAIExtensions is a cutting-edge library designed to enhance and streamline the integration of Azure OpenAI services into your applications.
 			Leveraging the advanced capabilities of Azure OpenAI and developed on top of SematicKernel, my goal is to provide developers with a comprehensive toolkit that simplifies the process of building AI-powered solutions.
 		</Description>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 	</PropertyGroup>
 
 	<ItemGroup>
