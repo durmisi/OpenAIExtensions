@@ -8,7 +8,7 @@
 
 	<PropertyGroup>
 		<PackageId>OpenAIExtensions</PackageId>
-		<Version>v1.0.0-prerelease</Version>
+		<Version>1.0.0</Version>
 		<Authors>Admir Durmishi</Authors>
 		<PackageTags>Azure Open AI, SemanticKernel, Chat Gpt, Plugins</PackageTags>
 		<Description>
