@@ -7,7 +7,7 @@ on:
   push:
     branches: [ "master" ]
     tags: 
-      - "v[0-9]+.[0-9]+.[0-9]+"
+      - 'v*.*.*'
   pull_request:
     branches: [ "master" ]
 
@@ -28,6 +28,17 @@ jobs:
       env:
         TAG: ${{ github.ref_name }}
       run: echo "VERSION=${TAG#v}" >> $GITHUB_ENV
+
+    - name: Get Tags
+      id: tags
+      run: |
+            git fetch --tags
+            echo "Tags fetched"      
+    - name: Get Latest Tag
+      id: latest-tag
+      run: |
+        latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+        echo latest_tag
     
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
@@ -41,6 +52,7 @@ jobs:
       run: dotnet build --no-restore -c Release /p:Version=$VERSION
     
     - name: Test
+      if: github.ref_type == 'tag'
       run: dotnet test --no-build -c Release --verbosity normal  
       env:
         OpenAI__Endpoint: ${{vars.OPENAI_ENDPOINT}}
