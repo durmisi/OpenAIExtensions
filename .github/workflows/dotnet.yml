@@ -7,7 +7,8 @@ on:
   push:
     branches: [ "master" ]
     tags: 
-      - 'v*.*.*'
+      - "v[0-9]+.[0-9]+.[0-9]+-preview[0-9][0-9][0-9]"
+
   pull_request:
     branches: [ "master" ]
 
@@ -23,22 +24,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
   
-    - name: Set Version Variable
-      if: github.ref_type == 'tag'
-      env:
-        TAG: ${{ github.ref_name }}
-      run: echo "VERSION=${TAG#v}" >> $GITHUB_ENV
-
-    - name: Get Tags
-      id: tags
-      run: |
-            git fetch --tags
-            echo "Tags fetched"      
-    - name: Get Latest Tag
-      id: latest-tag
-      run: |
-        latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
-        echo latest_tag
+    - name: Set VERSION variable from tag
+      run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
     
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
@@ -49,11 +36,10 @@ jobs:
       run: dotnet restore
     
     - name: Build
-      run: dotnet build --no-restore -c Release /p:Version=$VERSION
+      run: dotnet build --no-restore -c Release /p:Version=${VERSION}
     
     - name: Test
-      if: github.ref_type == 'tag'
-      run: dotnet test --no-build -c Release --verbosity normal  
+      run: dotnet test --no-build -c Release --verbosity normal  /p:Version=${VERSION}
       env:
         OpenAI__Endpoint: ${{vars.OPENAI_ENDPOINT}}
         OpenAI__Key: ${{secrets.OPENAI_KEY}}
@@ -65,10 +51,9 @@ jobs:
         OpenAI__TranslationService__Key: ${{secrets.OPENAI_TRANSLATIONSERVICE_KEY}}
     
     - name: Pack
-      run: dotnet pack --output nupkgs --no-restore --no-build -c Release /p:PackageVersion=$VERSION
+      run: dotnet pack --output nupkgs --no-restore --no-build -c Release /p:Version=${VERSION}
     
     - name: Push
-      if: github.ref_type == 'tag'
       run: dotnet nuget push nupkgs/*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
 
     
