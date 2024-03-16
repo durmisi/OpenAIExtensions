@@ -1,33 +1,25 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using OpenAIExtensions.Services;
 using Xunit.Abstractions;
 
 namespace OpenAIExtensions.Tests;
 
-public class AIImageServiceTests
+public class AIImageServiceTests : IntegrationTestBase
 {
     private readonly AIImageService _imageService;
     private readonly ITestOutputHelper _outputHelper;
 
     public AIImageServiceTests(ITestOutputHelper outputHelper)
+        : base(outputHelper)
     {
-        var configuration = new ConfigurationBuilder()
-            .AddJsonFile($"appsettings.json")
-            .AddJsonFile($"appsettings.Development.json", optional: true)
-            .AddEnvironmentVariables(prefix: "")
-            .Build();
-
-        var logger = LoggerFactory
-                .Create(x => x.AddConsole())
-                .CreateLogger<AIImageService>();
+        var logger = CreateLogger<AIImageService>();
 
 
-        var endpoint = configuration.GetValue<string>("OpenAI:ImageService:Endpoint")!;
-        var key = configuration.GetValue<string>("OpenAI:ImageService:Key")!;
+        var endpoint = Configuration.GetValue<string>("OpenAI:ImageService:Endpoint")!;
+        var key = Configuration.GetValue<string>("OpenAI:ImageService:Key")!;
 
         _imageService = new AIImageService(new AIBroker(endpoint, key), logger);
-        this._outputHelper = outputHelper;
+        _outputHelper = outputHelper;
     }
 
 

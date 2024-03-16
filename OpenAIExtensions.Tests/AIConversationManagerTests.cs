@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel.ChatCompletion;
 using OpenAIExtensions.Chats;
 using OpenAIExtensions.Plugins.Demo;
@@ -8,30 +7,18 @@ using Xunit.Abstractions;
 
 namespace OpenAIExtensions.Tests;
 
-public class AIConversationManagerTests
+public class AIConversationManagerTests : IntegrationTestBase
 {
     private readonly AIConversationManager _aiConversationManager;
     private readonly ITestOutputHelper _outputHelper;
 
     public AIConversationManagerTests(ITestOutputHelper outputHelper)
+        : base(outputHelper)
     {
-        var configuration = new ConfigurationBuilder()
-            .AddJsonFile($"appsettings.json")
-            .AddJsonFile($"appsettings.Development.json", optional: true)
-            .AddEnvironmentVariables(prefix: "")
-            .Build();
+        var logger = CreateLogger<AIConversationManager>();
 
-        var logger = LoggerFactory
-                .Create(x => x.AddConsole())
-                .CreateLogger<AIConversationManager>();
-
-
-        
-        var endpoint = configuration.GetValue<string>("OpenAI:Endpoint");
-        var key = configuration.GetValue<string>("OpenAI:Key");
-
-        outputHelper.WriteLine("E:" + endpoint);
-        outputHelper.WriteLine("K:" + key.Substring(0,1));
+        var endpoint = Configuration.GetValue<string>("OpenAI:Endpoint");
+        var key = Configuration.GetValue<string>("OpenAI:Key");
 
         var kernel = SematicKernelBuilder.Create()
             .AddAIChatCompletion(endpoint: endpoint, apiKey: key)

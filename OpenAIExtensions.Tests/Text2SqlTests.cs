@@ -1,31 +1,21 @@
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using OpenAIExtensions.Text2Sql;
 using Xunit.Abstractions;
 
 namespace OpenAIExtensions.Tests
 {
-    public class Text2SqlTests
+    public class Text2SqlTests : IntegrationTestBase
     {
         private readonly AISqlGenerator _aiProcessingService;
         private readonly ITestOutputHelper _outputHelper;
 
         public Text2SqlTests(ITestOutputHelper outputHelper)
+            : base(outputHelper)
         {
-            var configuration = new ConfigurationBuilder()
-                .AddJsonFile($"appsettings.json")
-                .AddJsonFile($"appsettings.Development.json", optional: true)
-                .AddEnvironmentVariables(prefix: "")
-                .Build();
+            var logger = CreateLogger<AISqlGenerator>();
 
-            var aiBroker = new AIBroker(configuration);
-
-            var logger = LoggerFactory
-                .Create(x => x.AddConsole())
-                .CreateLogger<AISqlGenerator>();
-
-            var endpoint = configuration.GetValue<string>("OpenAI:Endpoint");
-            var key = configuration.GetValue<string?>("OpenAI:Key");
+            var endpoint = Configuration.GetValue<string>("OpenAI:Endpoint")!;
+            var key = Configuration.GetValue<string?>("OpenAI:Key")!;
 
             _aiProcessingService = new AISqlGenerator(endpoint, key, logger);
 

@@ -5,29 +5,21 @@ using Xunit.Abstractions;
 
 namespace OpenAIExtensions.Tests;
 
-public class AITranslationServiceTests
+public class AITranslationServiceTests : IntegrationTestBase
 {
     private readonly AITranslationService _translationService;
     private readonly ITestOutputHelper _outputHelper;
 
     public AITranslationServiceTests(ITestOutputHelper outputHelper)
+        : base(outputHelper)
     {
-        var configuration = new ConfigurationBuilder()
-            .AddJsonFile($"appsettings.json")
-            .AddJsonFile($"appsettings.Development.json", optional: true)
-            .AddEnvironmentVariables(prefix: "")
-            .Build();
+        var logger = CreateLogger<AITranslationService>();
 
-        var logger = LoggerFactory
-                .Create(x => x.AddConsole())
-                .CreateLogger<AITranslationService>();
-
-        var endpoint = configuration.GetValue<string>("OpenAI:TranslationService:Endpoint")!;
-        var key = configuration.GetValue<string>("OpenAI:TranslationService:Key")!;
-
+        var endpoint = Configuration.GetValue<string>("OpenAI:TranslationService:Endpoint")!;
+        var key = Configuration.GetValue<string>("OpenAI:TranslationService:Key")!;
 
         _translationService = new AITranslationService(new AIBroker(endpoint, key), logger);
-        this._outputHelper = outputHelper;
+        _outputHelper = outputHelper;
     }
 
     [Fact]
@@ -54,8 +46,8 @@ public class AITranslationServiceTests
     {
         //Act
         var translationResult = await _translationService.TranslateToManyAsync(
-            "Нешто на Македонски", 
-            "Macedonian", 
+            "Нешто на Македонски",
+            "Macedonian",
             ["English", "Italian"]);
 
 

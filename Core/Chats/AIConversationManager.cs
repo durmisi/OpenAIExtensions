@@ -30,7 +30,7 @@ namespace OpenAIExtensions.Chats
 
         public IAsyncEnumerable<StreamingChatMessageContent>? ProcessConversationStreamAsync(
             ChatHistory chatHistory,
-            string? systemMessage = null,
+            string? systemPropmpt = null,
             OpenAIPromptExecutionSettings? executionSettings = null,
             CancellationToken ct = default)
         {
@@ -42,32 +42,22 @@ namespace OpenAIExtensions.Chats
                 ToolCallBehavior = ToolCallBehavior.AutoInvokeKernelFunctions
             };
 
+
             if (executionSettings != null)
             {
                 openAIPromptExecutionSettings = executionSettings;
             }
 
-            var history = new ChatHistory();
-
-            if (!string.IsNullOrEmpty(systemMessage))
+            if (string.IsNullOrEmpty(openAIPromptExecutionSettings.ChatSystemPrompt) 
+                && !string.IsNullOrEmpty(systemPropmpt))
             {
-
-                history.AddSystemMessage(systemMessage);
-            }
-
-            foreach (var item in chatHistory)
-            {
-                if (item.InnerContent != null && !item.InnerContent.Equals(systemMessage?.ToString()))
-                {
-                    continue;
-                }
-
-                history.Add(item);
+                openAIPromptExecutionSettings.ChatSystemPrompt = systemPropmpt;
             }
 
             var chatCompletionService = _kernel.GetRequiredService<IChatCompletionService>();
 
-            IAsyncEnumerable<StreamingChatMessageContent> result = chatCompletionService.GetStreamingChatMessageContentsAsync(chatHistory: history,
+            IAsyncEnumerable<StreamingChatMessageContent> result = chatCompletionService
+                .GetStreamingChatMessageContentsAsync(chatHistory: chatHistory,
                 executionSettings: openAIPromptExecutionSettings,
                 kernel: _kernel,
                 cancellationToken: ct);

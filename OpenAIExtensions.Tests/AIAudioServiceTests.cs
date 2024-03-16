@@ -1,33 +1,24 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using OpenAIExtensions.Services;
+using Xunit.Abstractions;
 
 namespace OpenAIExtensions.Tests;
 
-public class AIAudioServiceTests
+public class AIAudioServiceTests : IntegrationTestBase
 {
     private readonly AIAudioService _audioService;
 
-    public AIAudioServiceTests()
+    public AIAudioServiceTests(ITestOutputHelper outputHelper)
+        : base(outputHelper)
     {
-        var configuration = new ConfigurationBuilder()
-            .AddJsonFile($"appsettings.json")
-            .AddJsonFile($"appsettings.Development.json", optional: true)
-            .AddEnvironmentVariables(prefix: "")
-            .Build();
 
-        var logger = LoggerFactory
-                .Create(x => x.AddConsole())
-                .CreateLogger<AIAudioService>();
+        var logger = CreateLogger<AIAudioService>();
 
-
-        var endpoint = configuration.GetValue<string>("OpenAI:AudioService:Endpoint")!;
-        var key = configuration.GetValue<string>("OpenAI:AudioService:Key")!;
+        var endpoint = Configuration.GetValue<string>("OpenAI:AudioService:Endpoint")!;
+        var key = Configuration.GetValue<string>("OpenAI:AudioService:Key")!;
 
         _audioService = new AIAudioService(new AIBroker(endpoint, key), logger);
-
     }
-
 
     [Fact]
     public async Task AIAudioService_Transcribe_mp4_files()

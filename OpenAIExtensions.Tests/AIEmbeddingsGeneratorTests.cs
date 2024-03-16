@@ -1,29 +1,21 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using OpenAIExtensions.Services;
 using Xunit.Abstractions;
 
 namespace OpenAIExtensions.Tests;
 
-public class AIEmbeddingsGeneratorTests
+public class AIEmbeddingsGeneratorTests : IntegrationTestBase
 {
     private readonly AIEmbeddingsGenerator _embeddingsGenerator;
     private readonly ITestOutputHelper _outputHelper;
 
     public AIEmbeddingsGeneratorTests(ITestOutputHelper outputHelper)
+        : base(outputHelper)
     {
-        var configuration = new ConfigurationBuilder()
-            .AddJsonFile($"appsettings.json")
-            .AddJsonFile($"appsettings.Development.json", optional: true)
-            .AddEnvironmentVariables(prefix: "")
-            .Build();
+        var logger = CreateLogger<AIEmbeddingsGenerator>();
 
-        var logger = LoggerFactory
-                .Create(x => x.AddConsole())
-                .CreateLogger<AIEmbeddingsGenerator>();
-
-        var endpoint = configuration.GetValue<string>("OpenAI:Endpoint")!;
-        var key = configuration.GetValue<string>("OpenAI:Key")!;
+        var endpoint = Configuration.GetValue<string>("OpenAI:Endpoint")!;
+        var key = Configuration.GetValue<string>("OpenAI:Key")!;
 
         _embeddingsGenerator = new AIEmbeddingsGenerator(endpoint, key, logger);
         _outputHelper = outputHelper;
