@@ -75,13 +75,12 @@ namespace OpenAIExtensions
             string? apiKey = null,
             string deploymentName = "text-embedding-ada-002")
         {
-#pragma warning disable SKEXP0011 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+#pragma warning disable SKEXP0010 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
             _kernelBuilder.AddAzureOpenAITextEmbeddingGeneration(
                deploymentName: deploymentName,
                endpoint: GetEndpoint(endpoint),
                apiKey: GetApiKey(apiKey));
-#pragma warning restore SKEXP0011 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-
+#pragma warning restore SKEXP0010 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
             return this;
         }
@@ -91,13 +90,12 @@ namespace OpenAIExtensions
             string? apiKey = null,
             string deploymentName = "whisper-001")
         {
-#pragma warning disable SKEXP0005 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+#pragma warning disable SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
             _kernelBuilder.AddAzureOpenAIAudioToText(
                deploymentName: deploymentName,
                endpoint: GetEndpoint(endpoint),
                apiKey: GetApiKey(apiKey));
-#pragma warning restore SKEXP0005 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-
+#pragma warning restore SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
             return this;
         }
@@ -107,21 +105,21 @@ namespace OpenAIExtensions
     string? apiKey = null,
     string deploymentName = "gpt-35-turbo-0613")
         {
-#pragma warning disable SKEXP0005 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+#pragma warning disable SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
             _kernelBuilder.AddAzureOpenAITextToAudio(
                deploymentName: deploymentName,
                endpoint: GetEndpoint(endpoint),
                apiKey: GetApiKey(apiKey));
-#pragma warning restore SKEXP0005 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+#pragma warning restore SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
             return this;
         }
 
         public SematicKernelBuilder AddAIFiles(string? apiKey = null)
         {
-#pragma warning disable SKEXP0015 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+#pragma warning disable SKEXP0010 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
             _kernelBuilder.AddOpenAIFiles(apiKey: GetApiKey(apiKey));
-#pragma warning restore SKEXP0015 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+#pragma warning restore SKEXP0010 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
             return this;
         }
