@@ -11,8 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenAIExtensions", "Core\Op
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{43378483-D0D1-41AA-8370-CC05116C05AD}"
 	ProjectSection(SolutionItems) = preProject
-		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+		.github\workflows\ci.yml = .github\workflows\ci.yml
 		README.md = README.md
+		.github\workflows\cd.yml = .github\workflows\cd.yml
 	EndProjectSection
 EndProject
 Global
