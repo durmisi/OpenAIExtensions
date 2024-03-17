@@ -18,7 +18,7 @@ namespace OpenAIExtensions
 
     public static class KernelMemoryFactory
     {
-        public static IKernelMemory Create(CreateKernelMemoryRequest request)
+        public static IKernelMemory WithSqlServerMemoryDb(CreateKernelMemoryRequest request)
         {
             if (request is null)
             {
@@ -40,7 +40,7 @@ namespace OpenAIExtensions
                 .WithSqlServerMemoryDb(config)
                 .Build<MemoryServerless>();
 
-            return kernelMemory;
+            return kernelMemory!;
         }
 
         public static IKernelMemoryBuilder WithAzureOpenAIDefaults(
