@@ -1,5 +1,5 @@
-﻿using Azure.AI.OpenAI;
-using Azure;
+﻿using Azure;
+using Azure.AI.OpenAI;
 using Microsoft.Extensions.Logging;
 
 namespace OpenAIExtensions.Services
@@ -13,7 +13,6 @@ namespace OpenAIExtensions.Services
         Task<AudioTranslation?> TranslateAsync(string path);
 
         Task<AudioTranslation?> TranslateAsync(string fileName, Stream audioStream);
-
     }
 
     /// <summary>
@@ -29,7 +28,7 @@ namespace OpenAIExtensions.Services
 
         public AIAudioService(
             IAIBroker aIBroker,
-            ILogger<AIAudioService> logger, 
+            ILogger<AIAudioService> logger,
             string? deploymentName = null)
         {
             _logger = logger;
@@ -88,7 +87,6 @@ namespace OpenAIExtensions.Services
 
         public async Task<AudioTranslation?> TranslateAsync(string fileName, Stream audioStream)
         {
-
             var translationOptions = new AudioTranslationOptions()
             {
                 DeploymentName = _deploymentName,

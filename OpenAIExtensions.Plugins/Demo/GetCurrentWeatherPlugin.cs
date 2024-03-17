@@ -13,6 +13,5 @@ namespace OpenAIExtensions.Plugins.Demo
         {
             return new Random().Next(1, 27);
         }
-
     }
 }

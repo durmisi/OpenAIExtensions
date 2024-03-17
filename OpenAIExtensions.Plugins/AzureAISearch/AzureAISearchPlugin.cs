@@ -4,8 +4,6 @@
 
 //namespace OpenAIExtensions.Tools
 //{
-
-
 //    public class ChatWithYourDataTool : IChatExtension
 //    {
 //        private readonly IConfiguration _configuration;
@@ -14,7 +12,6 @@
 //           IConfiguration configuration
 //            )
 //        {
-
 //            _configuration = configuration;
 //        }
 
@@ -35,10 +32,8 @@
 //        {
 //            var searchEndpoint = _configuration.GetValue<string>("OpenAI:SearchService:Endpoint");
 
-
 //            if (string.IsNullOrEmpty(searchEndpoint))
 //            {
-
 //                throw new InvalidOperationException("Invalid configuration. Please check and try again.");
 
 //            }

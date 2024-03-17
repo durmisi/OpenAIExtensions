@@ -34,7 +34,6 @@ namespace OpenAIExtensions.Tools
         [GeneratedRegex("(\\<script(.+?)\\</script\\>)|(\\<style(.+?)\\</style\\>)", RegexOptions.IgnoreCase | RegexOptions.Singleline, "en-US")]
         private static partial Regex RegexCss();
 
-
         protected HtmlDocument LoadHtml(string html)
         {
             HtmlDocument doc = new();

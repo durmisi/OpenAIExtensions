@@ -33,7 +33,6 @@ public class AIConversationManagerTests : IntegrationTestBase
         _outputHelper = outputHelper;
     }
 
-
     [Fact]
     public async Task AIConversationManager_ProcessConversation_and_run_all_tools()
     {
@@ -55,11 +54,10 @@ public class AIConversationManagerTests : IntegrationTestBase
         Assert.NotEmpty(response);
 
         _outputHelper.WriteLine(response);
-
     }
 
     [Fact]
-    public async Task AIConversationManager_ProcessConversation_can_search_in_wikipedi()
+    public async Task AIConversationManager_ProcessConversation_can_search_in_wikipedia()
     {
         //Arrange
 
@@ -79,6 +77,5 @@ public class AIConversationManagerTests : IntegrationTestBase
         Assert.NotEmpty(response);
 
         _outputHelper.WriteLine(response);
-
     }
 }

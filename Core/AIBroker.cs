@@ -5,17 +5,15 @@ using Microsoft.Extensions.Configuration;
 
 namespace OpenAIExtensions
 {
-
     public interface IAIBroker
     {
         public OpenAIClient GetClient();
-        public OpenAIClient GetClient(string endpoint, string? key);
 
+        public OpenAIClient GetClient(string endpoint, string? key);
     }
 
     public class AIBroker : IAIBroker
     {
-
         private readonly IConfiguration? _configuration;
         private readonly string? _endpoint;
         private readonly string? _key;
@@ -41,13 +39,10 @@ namespace OpenAIExtensions
             _key = key;
         }
 
-
         public OpenAIClient GetClient()
         {
-
             if (_configuration != null)
             {
-
                 var endpoint = _configuration.GetValue<string>("OpenAI:Endpoint");
 
                 if (string.IsNullOrEmpty(endpoint))
@@ -81,6 +76,5 @@ namespace OpenAIExtensions
                   new Uri(endpoint),
                   new DefaultAzureCredential());
         }
-
     }
 }

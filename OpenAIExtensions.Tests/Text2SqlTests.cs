@@ -43,7 +43,6 @@ namespace OpenAIExtensions.Tests
         {
             return new ContextInformation()
             {
-
                 Tables = [
                    new()
                    {

@@ -1,5 +1,4 @@
-﻿using Azure;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
@@ -11,7 +10,6 @@ namespace OpenAIExtensions.Tests
 
         protected IntegrationTestBase(ITestOutputHelper outputHelper)
         {
-
             Configuration = new ConfigurationBuilder()
             .AddJsonFile($"appsettings.json")
             .AddJsonFile($"appsettings.Development.json", optional: true)
@@ -28,6 +26,5 @@ namespace OpenAIExtensions.Tests
         {
             return _loggerFactory.CreateLogger<T>();
         }
-
     }
 }

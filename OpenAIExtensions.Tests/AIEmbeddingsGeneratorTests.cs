@@ -21,7 +21,6 @@ public class AIEmbeddingsGeneratorTests : IntegrationTestBase
         _outputHelper = outputHelper;
     }
 
-
     [Fact]
     public async Task AIEmbeddingsGenerator_Create_embeddings_from_text()
     {
@@ -34,5 +33,4 @@ public class AIEmbeddingsGeneratorTests : IntegrationTestBase
 
         _outputHelper.WriteLine($"Vector {string.Join(", ", embeddings!.First().Span.ToArray())}...");
     }
-
 }

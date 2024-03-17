@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.KernelMemory;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
@@ -34,7 +35,6 @@ namespace OpenAIExtensions.Chats
             OpenAIPromptExecutionSettings? executionSettings = null,
             CancellationToken ct = default)
         {
-
             ArgumentNullException.ThrowIfNull(chatHistory);
 
             OpenAIPromptExecutionSettings openAIPromptExecutionSettings = new()
@@ -42,13 +42,12 @@ namespace OpenAIExtensions.Chats
                 ToolCallBehavior = ToolCallBehavior.AutoInvokeKernelFunctions
             };
 
-
             if (executionSettings != null)
             {
                 openAIPromptExecutionSettings = executionSettings;
             }
 
-            if (string.IsNullOrEmpty(openAIPromptExecutionSettings.ChatSystemPrompt) 
+            if (string.IsNullOrEmpty(openAIPromptExecutionSettings.ChatSystemPrompt)
                 && !string.IsNullOrEmpty(systemPropmpt))
             {
                 openAIPromptExecutionSettings.ChatSystemPrompt = systemPropmpt;
@@ -63,9 +62,7 @@ namespace OpenAIExtensions.Chats
                 cancellationToken: ct);
 
             return result;
-
         }
-
 
         public async ValueTask<string?> ProcessConversationAsync(
             ChatHistory chatHistory,
@@ -73,7 +70,6 @@ namespace OpenAIExtensions.Chats
             OpenAIPromptExecutionSettings? executionSettings = null,
             CancellationToken ct = default)
         {
-
             var result = ProcessConversationStreamAsync(chatHistory, systemMessage, executionSettings, ct);
 
             if (result != null)

@@ -33,7 +33,6 @@ namespace OpenAIExtensions.Services
             }
         }
 
-
         private ChatCompletionsOptions GetCompletionsOptions()
         {
             var completionOptions = new ChatCompletionsOptions
@@ -49,8 +48,6 @@ namespace OpenAIExtensions.Services
             return completionOptions;
         }
 
-
-
         public async Task<string?> TranslateAsync(string text, string fromLanguage, string toLanguage = "English")
         {
             var systemPrompt = $"You are a virtual agent that helps users translate passages from {fromLanguage} to {toLanguage}.";
@@ -65,17 +62,14 @@ namespace OpenAIExtensions.Services
 
             ChatCompletions response = await _client.GetChatCompletionsAsync(completionOptions);
 
-
             var choice = response.Choices.FirstOrDefault();
 
             if (choice != null)
             {
-
                 return choice?.Message?.Content;
             }
 
             return null;
-
         }
 
         public async Task<Dictionary<string, string>?> TranslateToManyAsync(string text, string fromLanguage, string[]? toLanguages = null)
@@ -93,11 +87,9 @@ namespace OpenAIExtensions.Services
                 toLanguagesString += $" {i + 1}.{language}, ";
             }
 
-
             var systemPrompt = $"You are a virtual agent that helps users translate passages from {fromLanguage} to {toLanguagesString}.";
 
             var userPrompt = $@"Translate this into {toLanguagesString} {text} and return the result as json dictionary of language/translation but exclude the original language.";
-
 
             var completionOptions = GetCompletionsOptions();
 
@@ -105,7 +97,6 @@ namespace OpenAIExtensions.Services
             completionOptions.Messages.Add(new ChatRequestUserMessage(userPrompt));
 
             ChatCompletions response = await _client.GetChatCompletionsAsync(completionOptions);
-
 
             var choice = response.Choices.FirstOrDefault();
 
@@ -124,7 +115,6 @@ namespace OpenAIExtensions.Services
             }
 
             return null;
-
         }
     }
 }

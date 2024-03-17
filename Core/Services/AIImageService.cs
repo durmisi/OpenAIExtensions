@@ -61,6 +61,5 @@ namespace OpenAIExtensions.Services
 
             return null;
         }
-
     }
 }

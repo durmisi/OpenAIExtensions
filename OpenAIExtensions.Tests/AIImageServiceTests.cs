@@ -14,14 +14,12 @@ public class AIImageServiceTests : IntegrationTestBase
     {
         var logger = CreateLogger<AIImageService>();
 
-
         var endpoint = Configuration.GetValue<string>("OpenAI:ImageService:Endpoint")!;
         var key = Configuration.GetValue<string>("OpenAI:ImageService:Key")!;
 
         _imageService = new AIImageService(new AIBroker(endpoint, key), logger);
         _outputHelper = outputHelper;
     }
-
 
     [Fact]
     public async Task AIImageService_Describes_images()
@@ -36,5 +34,4 @@ public class AIImageServiceTests : IntegrationTestBase
 
         _outputHelper.WriteLine(response);
     }
-
 }

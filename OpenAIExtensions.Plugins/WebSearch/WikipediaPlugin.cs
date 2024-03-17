@@ -31,9 +31,6 @@ namespace OpenAIExtensions.Plugins.WebSearch
             string plainText = GetPlainTextFromHtml(sb.ToString());
 
             return plainText.Substring(0, ContentLenght);
-
         }
-
-
     }
 }

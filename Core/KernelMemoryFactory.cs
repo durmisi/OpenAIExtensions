@@ -1,0 +1,91 @@
+﻿using KernelMemory.MemoryStorage.SqlServer;
+using Microsoft.Extensions.Logging;
+using Microsoft.KernelMemory;
+using Microsoft.KernelMemory.AI;
+using Microsoft.KernelMemory.AI.AzureOpenAI;
+using Microsoft.KernelMemory.AI.OpenAI;
+using Microsoft.SemanticKernel;
+
+namespace OpenAIExtensions
+{
+    public class CreateKernelMemoryRequest
+    {
+        public required string Endpoint { get; set; }
+        public required string ApiKey { get; set; }
+        public required string ConnectionString { get; set; }
+        public string? Schema { get; set; }
+    }
+
+    public static class KernelMemoryFactory
+    {
+        public static IKernelMemory Create(CreateKernelMemoryRequest request)
+        {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
+            var kernelMemoryBuilder = new KernelMemoryBuilder()
+                .WithAzureOpenAIDefaults(
+                request.Endpoint,
+                request.ApiKey);
+
+            var config = new SqlServerConfig()
+            {
+                ConnectionString = request.ConnectionString,
+                Schema = request.Schema ?? "ai"
+            };
+
+            var kernelMemory = kernelMemoryBuilder
+                .WithSqlServerMemoryDb(config)
+                .Build<MemoryServerless>();
+
+            return kernelMemory;
+        }
+
+        public static IKernelMemoryBuilder WithAzureOpenAIDefaults(
+            this IKernelMemoryBuilder builder,
+            string endpoint,
+            string apiKey,
+            ITextTokenizer? textGenerationTokenizer = null,
+            ITextTokenizer? textEmbeddingTokenizer = null,
+            ILoggerFactory? loggerFactory = null,
+            bool onlyForRetrieval = false,
+            HttpClient? httpClient = null)
+        {
+            textGenerationTokenizer ??= new DefaultGPTTokenizer();
+            textEmbeddingTokenizer ??= new DefaultGPTTokenizer();
+
+            var textEmbbedingAIConfig = new AzureOpenAIConfig
+            {
+                APIKey = apiKey,
+                Endpoint = endpoint,
+                Deployment = "text-embedding-ada-002",
+                MaxRetries = 3,
+                Auth = AzureOpenAIConfig.AuthTypes.APIKey,
+                MaxTokenTotal = 8191,
+            };
+
+            var textGenerationAIConfig = new AzureOpenAIConfig
+            {
+                APIKey = apiKey,
+                Endpoint = endpoint,
+                Deployment = "gpt-35-turbo-0613",
+                MaxRetries = 3,
+                Auth = AzureOpenAIConfig.AuthTypes.APIKey,
+                MaxTokenTotal = 16384,
+            };
+
+            textEmbbedingAIConfig.Validate();
+            textGenerationAIConfig.Validate();
+            builder.Services.AddAzureOpenAIEmbeddingGeneration(textEmbbedingAIConfig, textEmbeddingTokenizer, httpClient);
+            builder.Services.AddAzureOpenAITextGeneration(textGenerationAIConfig, textGenerationTokenizer, httpClient);
+            if (!onlyForRetrieval)
+            {
+                builder.AddIngestionEmbeddingGenerator(new AzureOpenAITextEmbeddingGenerator(textEmbbedingAIConfig, textEmbeddingTokenizer, loggerFactory, httpClient));
+            }
+
+            return builder;
+        }
+    }
+}

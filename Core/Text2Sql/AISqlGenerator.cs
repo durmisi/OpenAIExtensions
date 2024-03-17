@@ -14,7 +14,6 @@ namespace OpenAIExtensions.Text2Sql
 
     public class AISqlGenerator : IAISqlGenerator
     {
-
         private readonly IChatCompletionService _chatCompletionService;
 
         private readonly ILogger<AISqlGenerator> _logger;
@@ -39,8 +38,8 @@ namespace OpenAIExtensions.Text2Sql
 
             ArgumentNullException.ThrowIfNull(logger);
 
-            _deploymentName = !string.IsNullOrEmpty(deploymentName) 
-                ? deploymentName 
+            _deploymentName = !string.IsNullOrEmpty(deploymentName)
+                ? deploymentName
                 : _deploymentName;
 
             var kernel = SematicKernelBuilder.Create()
@@ -62,19 +61,16 @@ namespace OpenAIExtensions.Text2Sql
             _logger = logger;
         }
 
-
         public async ValueTask<string> TranslateToSqlQueryAsync(
             string naturalQuery,
             ContextInformation context)
         {
             try
             {
-
                 ValidateQuery(naturalQuery);
                 ValidateContext(context);
 
                 string contextDescription = GetContextDescription(context);
-
 
                 string naturalQueryInput = @$"
                     Given a SQL db with the following tables:
@@ -89,7 +85,6 @@ namespace OpenAIExtensions.Text2Sql
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
@@ -100,7 +95,6 @@ namespace OpenAIExtensions.Text2Sql
             {
                 throw new ArgumentException("Please provide a valid query");
             }
-
         }
 
         private static void ValidateContext(ContextInformation context)
@@ -109,7 +103,6 @@ namespace OpenAIExtensions.Text2Sql
             {
                 throw new ArgumentException("Please provide a valid context.");
             }
-
 
             foreach (var table in context.Tables)
             {
@@ -139,7 +132,6 @@ namespace OpenAIExtensions.Text2Sql
 
             foreach (var table in context.Tables)
             {
-
                 if (!string.IsNullOrEmpty(table.Schema))
                 {
                     contextDescription += $"Entity with Name = {table.Name} and Schema = {table.Schema} has the following properties:";
@@ -148,7 +140,6 @@ namespace OpenAIExtensions.Text2Sql
                 {
                     contextDescription += $"Entity with Name = {table.Name} and Schema = dbo has the following properties:";
                 }
-
 
                 foreach (var column in table.Columns)
                 {
@@ -194,6 +185,5 @@ namespace OpenAIExtensions.Text2Sql
                 throw;
             }
         }
-
     }
 }

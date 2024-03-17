@@ -11,7 +11,6 @@ public class AIAudioServiceTests : IntegrationTestBase
     public AIAudioServiceTests(ITestOutputHelper outputHelper)
         : base(outputHelper)
     {
-
         var logger = CreateLogger<AIAudioService>();
 
         var endpoint = Configuration.GetValue<string>("OpenAI:AudioService:Endpoint")!;
@@ -41,7 +40,5 @@ public class AIAudioServiceTests : IntegrationTestBase
         //Assert
         Assert.NotNull(audioTranslation?.Language);
         Assert.NotNull(audioTranslation?.Text);
-
     }
-
 }

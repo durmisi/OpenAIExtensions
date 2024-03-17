@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using OpenAIExtensions.Services;
 using Xunit.Abstractions;
 
@@ -31,7 +30,6 @@ public class AITranslationServiceTests : IntegrationTestBase
             "Macedonian",
             "English");
 
-
         //Assert
         Assert.NotNull(translationResult);
         Assert.NotEmpty(translationResult);
@@ -39,7 +37,6 @@ public class AITranslationServiceTests : IntegrationTestBase
 
         _outputHelper.WriteLine(translationResult);
     }
-
 
     [Fact]
     public async Task AITranslationService_Translate_test_to_Many_languages()
@@ -50,7 +47,6 @@ public class AITranslationServiceTests : IntegrationTestBase
             "Macedonian",
             ["English", "Italian"]);
 
-
         //Assert
         Assert.NotNull(translationResult);
 
@@ -60,5 +56,4 @@ public class AITranslationServiceTests : IntegrationTestBase
             _outputHelper.WriteLine(translationResult[key]);
         }
     }
-
 }

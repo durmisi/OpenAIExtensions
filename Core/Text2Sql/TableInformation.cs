@@ -7,5 +7,10 @@
         public string Schema { get; set; }
 
         public IEnumerable<ColumnInformation> Columns { get; set; }
+
+        public TableInformation()
+        {
+            Columns = [];
+        }
     }
 }
