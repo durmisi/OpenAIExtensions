@@ -43,8 +43,7 @@ namespace OpenAIExtensions
             kernel.ImportPluginFromObject(new TextMemoryPlugin(semanticTextMemory));
 
             //MemoryPlugin
-            var plugin = new MemoryPlugin(kernelMemory, waitForIngestionToComplete: true);
-            kernel.ImportPluginFromObject(plugin, "memory");
+            kernel.ImportPluginFromObject(new MemoryPlugin(kernelMemory, waitForIngestionToComplete: true), "memory");
 
             return kernelMemory;
         }
