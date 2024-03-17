@@ -58,8 +58,7 @@ public class KernelMemoryTests : IntegrationTestBase, IAsyncLifetime
         _ = await _kernelMemory.ImportTextAsync($"Моменталната температура во центарот на градот е {temp} степени.");
 
         var systemMessage = @"
-            You are an AI bot that only knows how to answer user questions based on your memory and return the answers.
-            Always respond with text.
+            You are a helpful friendly assistant.
         ";
 
         //Act
@@ -78,19 +77,19 @@ public class KernelMemoryTests : IntegrationTestBase, IAsyncLifetime
         history.AddMessage(AuthorRole.User, prompt);
 
         var response = await aiConversationManager.ProcessConversationAsync(history, systemMessage);
+        WriteToConsole(response);
 
         //Asert
         Assert.NotNull(response);
         Assert.NotEmpty(response);
         Assert.Contains(temp.ToString(), response);
 
-        _outputHelper.WriteLine(response);
     }
 
     public async Task InitializeAsync()
     {
-
         await _msSqlContainer.StartAsync();
+
         var connectionString = _msSqlContainer.GetConnectionString();
         var schema = "ai" + new Random().Next(1, 100);
 
@@ -107,7 +106,6 @@ public class KernelMemoryTests : IntegrationTestBase, IAsyncLifetime
             apiKey,
             connectionString,
             schema);
-
     }
 
     public async Task DisposeAsync()

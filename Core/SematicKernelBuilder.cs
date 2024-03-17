@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.KernelMemory;
 using Microsoft.SemanticKernel;
 using OpenAIExtensions.HttpClients;
@@ -15,8 +16,12 @@ namespace OpenAIExtensions
         private SematicKernelBuilder()
         {
             _kernelBuilder = Kernel.CreateBuilder();
-
             _kernelBuilder.Services.AddHttpClient<IRestApiClient, RestApiClient>();
+        }
+
+        public static SematicKernelBuilder Create()
+        {
+            return new SematicKernelBuilder();
         }
 
         public static SematicKernelBuilder Create(string defaultEndpoint, string defaultKey)
@@ -38,10 +43,6 @@ namespace OpenAIExtensions
             };
         }
 
-        public static SematicKernelBuilder Create()
-        {
-            return new SematicKernelBuilder();
-        }
 
         public SematicKernelBuilder AddAIChatCompletion(
             string? endpoint = null,
@@ -134,16 +135,24 @@ namespace OpenAIExtensions
                 ?? throw new ArgumentNullException("Please provide a valid endpoint.");
         }
 
-        public Kernel Build()
-        {
-            return _kernelBuilder.Build();
-        }
-
         public SematicKernelBuilder AddPlugin<TPlugin>(string? pluginName = null)
             where TPlugin : class
         {
             _kernelBuilder.Plugins.AddFromType<TPlugin>(pluginName);
             return this;
+        }
+
+        public SematicKernelBuilder AddLogging(ILoggerFactory loggerFactory)
+        {
+            _kernelBuilder.Services.AddSingleton(loggerFactory);
+            return this;
+        }
+
+
+
+        public Kernel Build()
+        {
+            return _kernelBuilder.Build();
         }
     }
 }

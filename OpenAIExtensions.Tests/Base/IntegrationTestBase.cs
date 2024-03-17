@@ -7,6 +7,7 @@ namespace OpenAIExtensions.Tests
     public abstract class IntegrationTestBase
     {
         private readonly ILoggerFactory _loggerFactory;
+        private readonly ITestOutputHelper _outputHelper;
 
         protected IntegrationTestBase(ITestOutputHelper outputHelper)
         {
@@ -18,6 +19,8 @@ namespace OpenAIExtensions.Tests
 
             _loggerFactory = LoggerFactory
                 .Create(x => x.AddConsole());
+            
+            _outputHelper = outputHelper;
         }
 
         public IConfigurationRoot Configuration { get; }
@@ -26,5 +29,15 @@ namespace OpenAIExtensions.Tests
         {
             return _loggerFactory.CreateLogger<T>();
         }
+
+        protected void WriteToConsole(string? message = null)
+        {
+            if (!string.IsNullOrEmpty(message))
+            {
+                _outputHelper.WriteLine(message);
+            }
+        }
+
+
     }
 }
