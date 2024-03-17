@@ -43,7 +43,6 @@ namespace OpenAIExtensions
             };
         }
 
-
         public SematicKernelBuilder AddAIChatCompletion(
             string? endpoint = null,
             string? apiKey = null,
@@ -147,8 +146,6 @@ namespace OpenAIExtensions
             _kernelBuilder.Services.AddSingleton(loggerFactory);
             return this;
         }
-
-
 
         public Kernel Build()
         {

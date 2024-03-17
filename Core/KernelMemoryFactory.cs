@@ -10,9 +10,9 @@ namespace OpenAIExtensions
 {
     public class CreateKernelMemoryRequest
     {
-        public required string Endpoint { get; set; }
-        public required string ApiKey { get; set; }
-        public required string ConnectionString { get; set; }
+        public string Endpoint { get; set; }
+        public string ApiKey { get; set; }
+        public string ConnectionString { get; set; }
         public string? Schema { get; set; }
     }
 

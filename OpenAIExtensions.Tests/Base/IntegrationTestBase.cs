@@ -19,7 +19,7 @@ namespace OpenAIExtensions.Tests
 
             _loggerFactory = LoggerFactory
                 .Create(x => x.AddConsole());
-            
+
             _outputHelper = outputHelper;
         }
 
@@ -37,7 +37,5 @@ namespace OpenAIExtensions.Tests
                 _outputHelper.WriteLine(message);
             }
         }
-
-
     }
 }

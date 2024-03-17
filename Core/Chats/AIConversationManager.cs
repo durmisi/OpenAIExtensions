@@ -1,12 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.KernelMemory;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 
 namespace OpenAIExtensions.Chats
 {
-
     public interface IAIConversationManager
     {
         ValueTask<string?> ProcessConversationAsync(
@@ -27,7 +25,6 @@ namespace OpenAIExtensions.Chats
             _kernel = kernel;
             _logger = logger;
         }
-
 
         public IAsyncEnumerable<StreamingChatMessageContent>? ProcessConversationStreamAsync(
             ChatHistory chatHistory,

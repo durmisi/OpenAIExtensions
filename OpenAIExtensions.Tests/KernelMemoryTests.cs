@@ -83,7 +83,6 @@ public class KernelMemoryTests : IntegrationTestBase, IAsyncLifetime
         Assert.NotNull(response);
         Assert.NotEmpty(response);
         Assert.Contains(temp.ToString(), response);
-
     }
 
     public async Task InitializeAsync()
