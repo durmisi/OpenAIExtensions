@@ -12,7 +12,6 @@ namespace OpenAIExtensions
 
             services.AddScoped<IAISqlGenerator, AISqlGenerator>();
             services.AddScoped<IAIAudioService, IAIAudioService>();
-            services.AddScoped<IAIEmbeddingsGenerator, AIEmbeddingsGenerator>();
         }
     }
 }

@@ -17,7 +17,11 @@ public class AITranslationServiceTests : IntegrationTestBase
         var endpoint = Configuration.GetValue<string>("OpenAI:TranslationService:Endpoint")!;
         var key = Configuration.GetValue<string>("OpenAI:TranslationService:Key")!;
 
-        _translationService = new AITranslationService(new AIBroker(endpoint, key), logger);
+        var kernel = SematicKernelBuilder.Create()
+            .AddAIChatCompletion(endpoint: endpoint, apiKey: key)
+            .Build();
+
+        _translationService = new AITranslationService(kernel, logger);
         _outputHelper = outputHelper;
     }
 

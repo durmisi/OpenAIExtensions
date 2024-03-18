@@ -1,5 +1,7 @@
-﻿using Azure.AI.OpenAI;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.ChatCompletion;
+using Microsoft.SemanticKernel.Connectors.OpenAI;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -7,77 +9,82 @@ namespace OpenAIExtensions.Services
 {
     public interface ITranslationService
     {
-        Task<string?> TranslateAsync(string text, string fromLanguage, string toLanguage = "English");
+        Task<string?> TranslateAsync(string text, string fromLanguage, string toLanguage = "English", CancellationToken ct = default);
 
-        Task<Dictionary<string, string>?> TranslateToManyAsync(string text, string fromLanguage, string[]? toLanguages = null);
+        Task<Dictionary<string, string>?> TranslateToManyAsync(string text, string fromLanguage, string[]? toLanguages = null, CancellationToken ct = default);
     }
 
     public class AITranslationService : ITranslationService
     {
-        private readonly OpenAIClient _client;
-
+        private readonly Kernel _kernel;
         private readonly ILogger<AITranslationService> _logger;
 
-        private readonly string _deploymentName = "gpt-35-turbo-0613";
-
         public AITranslationService(
-            IAIBroker aIBroker,
-            ILogger<AITranslationService> logger, string? deploymentName = null)
+            Kernel kernel,
+            ILogger<AITranslationService> logger)
         {
+            _kernel = kernel;
             _logger = logger;
-            _client = aIBroker.GetClient();
-
-            if (!string.IsNullOrEmpty(deploymentName))
-            {
-                _deploymentName = deploymentName;
-            }
         }
 
-        private ChatCompletionsOptions GetCompletionsOptions()
-        {
-            var completionOptions = new ChatCompletionsOptions
-            {
-                DeploymentName = _deploymentName,
-                MaxTokens = 60,
-                Temperature = 0f,
-                FrequencyPenalty = 0.0f,
-                PresencePenalty = 0.0f,
-                NucleusSamplingFactor = 1 // Top P
-            };
-
-            return completionOptions;
-        }
-
-        public async Task<string?> TranslateAsync(string text, string fromLanguage, string toLanguage = "English")
+        public async Task<string?> TranslateAsync(string text,
+            string fromLanguage,
+            string toLanguage = "English",
+            CancellationToken ct = default)
         {
             var systemPrompt = $"You are a virtual agent that helps users translate passages from {fromLanguage} to {toLanguage}.";
 
             var userPrompt = $@"Translate this into 1. {toLanguage}.
                     {text}";
 
-            var completionOptions = GetCompletionsOptions();
+            var chatHistory = new ChatHistory();
 
-            completionOptions.Messages.Add(new ChatRequestSystemMessage(systemPrompt));
-            completionOptions.Messages.Add(new ChatRequestUserMessage(userPrompt));
+            chatHistory.AddSystemMessage(systemPrompt);
+            chatHistory.AddUserMessage(userPrompt);
 
-            ChatCompletions response = await _client.GetChatCompletionsAsync(completionOptions);
+            var response = await GetResponse(chatHistory, ct);
 
-            var choice = response.Choices.FirstOrDefault();
+            string responseMessage = response.Content ?? "";
 
-            if (choice != null)
+            if (!string.IsNullOrEmpty(responseMessage))
             {
-                return choice?.Message?.Content;
+                return responseMessage;
             }
 
             return null;
         }
 
-        public async Task<Dictionary<string, string>?> TranslateToManyAsync(string text, string fromLanguage, string[]? toLanguages = null)
+        private async Task<ChatMessageContent> GetResponse(ChatHistory chatHistory,
+            CancellationToken ct)
         {
-            if (toLanguages == null)
-            {
-                toLanguages = ["English"];
-            }
+            var openAIPromptExecutionSettings = GetExecutionSettings();
+
+            var chatCompletionService = _kernel.GetRequiredService<IChatCompletionService>();
+
+            var response = await chatCompletionService
+                .GetChatMessageContentAsync(chatHistory: chatHistory,
+                executionSettings: openAIPromptExecutionSettings,
+                kernel: _kernel,
+                cancellationToken: ct);
+
+            return response;
+        }
+
+        private static PromptExecutionSettings GetExecutionSettings() => new OpenAIPromptExecutionSettings()
+        {
+            MaxTokens = 60,
+            Temperature = 0f,
+            FrequencyPenalty = 0.0f,
+            PresencePenalty = 0.0f,
+            TopP = 1 // Top P
+        };
+
+        public async Task<Dictionary<string, string>?> TranslateToManyAsync(string text,
+            string fromLanguage,
+            string[]? toLanguages = null,
+            CancellationToken ct = default)
+        {
+            toLanguages ??= ["English"];
 
             var toLanguagesString = "";
 
@@ -91,24 +98,24 @@ namespace OpenAIExtensions.Services
 
             var userPrompt = $@"Translate this into {toLanguagesString} {text} and return the result as json dictionary of language/translation but exclude the original language.";
 
-            var completionOptions = GetCompletionsOptions();
+            var chatHistory = new ChatHistory();
 
-            completionOptions.Messages.Add(new ChatRequestSystemMessage(systemPrompt));
-            completionOptions.Messages.Add(new ChatRequestUserMessage(userPrompt));
+            chatHistory.AddSystemMessage(systemPrompt);
+            chatHistory.AddUserMessage(userPrompt);
 
-            ChatCompletions response = await _client.GetChatCompletionsAsync(completionOptions);
+            var response = await GetResponse(chatHistory, ct);
 
-            var choice = response.Choices.FirstOrDefault();
+            string responseMessage = response.Content ?? "";
 
-            if (choice != null)
+            if (!string.IsNullOrEmpty(responseMessage))
             {
-                var serializedOptions = new JsonSerializerOptions
+                JsonSerializerOptions serializedOptions = new()
                 {
                     PropertyNameCaseInsensitive = true,
                     NumberHandling = JsonNumberHandling.WriteAsString,
                 };
 
-                using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(choice.Message.Content));
+                using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(responseMessage));
                 var result = JsonSerializer.Deserialize<Dictionary<string, string>?>(stream, serializedOptions);
 
                 return result;

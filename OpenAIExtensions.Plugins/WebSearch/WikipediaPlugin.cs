@@ -7,9 +7,7 @@ namespace OpenAIExtensions.Plugins.WebSearch
 {
     public class WikipediaPlugin : WebSearchPlugin
     {
-
         private readonly int ContentLenght = 300;
-
 
         [KernelFunction, Description("Search wikipedia, wiki search")]
         public async Task<string> Search(
