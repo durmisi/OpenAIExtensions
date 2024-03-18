@@ -22,6 +22,7 @@ public class AIConversationManagerTests : IntegrationTestBase
 
         var kernel = SematicKernelBuilder.Create()
             .AddAIChatCompletion(endpoint: endpoint, apiKey: key)
+            .AddCorePlugins()
             .AddPlugin<GetCurrentWeatherPlugin>()
             .AddPlugin<WikipediaPlugin>()
             .Build();

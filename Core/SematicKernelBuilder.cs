@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.KernelMemory;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Plugins.Core;
-using OpenAIExtensions.HttpClients;
 
 namespace OpenAIExtensions
 {
@@ -17,7 +16,6 @@ namespace OpenAIExtensions
         private SematicKernelBuilder()
         {
             _kernelBuilder = Kernel.CreateBuilder();
-            _kernelBuilder.Services.AddHttpClient<IRestApiClient, RestApiClient>();
         }
 
         public static SematicKernelBuilder Create()
@@ -142,16 +140,23 @@ namespace OpenAIExtensions
             return this;
         }
 
-        public SematicKernelBuilder AddDefaultPlugins()
+        public SematicKernelBuilder AddCorePlugins()
         {
             _kernelBuilder.Plugins.AddFromType<ConversationSummaryPlugin>();
             _kernelBuilder.Plugins.AddFromType<FileIOPlugin>();
             _kernelBuilder.Plugins.AddFromType<HttpPlugin>();
             _kernelBuilder.Plugins.AddFromType<MathPlugin>();
             _kernelBuilder.Plugins.AddFromType<TextPlugin>();
-            _kernelBuilder.Plugins.AddFromType<HttpPlugin>();
             _kernelBuilder.Plugins.AddFromType<TimePlugin>();
             _kernelBuilder.Plugins.AddFromType<WaitPlugin>();
+            return this;
+        }
+
+        public SematicKernelBuilder AddWebSearchPlugin()
+        {
+            _kernelBuilder.Plugins.AddFromType<Microsoft.SemanticKernel.Plugins.Web.SearchUrlPlugin>();
+            _kernelBuilder.Plugins.AddFromType<Microsoft.SemanticKernel.Plugins.Web.WebFileDownloadPlugin>();
+            _kernelBuilder.Plugins.AddFromType<Microsoft.SemanticKernel.Plugins.Web.WebSearchEnginePlugin>();
             return this;
         }
 

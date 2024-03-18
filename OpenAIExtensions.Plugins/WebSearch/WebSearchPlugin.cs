@@ -1,21 +1,21 @@
 ﻿using HtmlAgilityPack;
-using OpenAIExtensions.HttpClients;
+using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.Plugins.Core;
 using System.Text.RegularExpressions;
 
 namespace OpenAIExtensions.Tools
 {
     public abstract partial class WebSearchPlugin
     {
-        private readonly IRestApiClient _restApiClient;
-
-        public WebSearchPlugin(IRestApiClient restApiClient)
+        protected async Task<string> GetHtml(Kernel kernel, string url)
         {
-            _restApiClient = restApiClient;
-        }
+            var html = await kernel.InvokeAsync<string>(pluginName: nameof(HttpPlugin),
+                functionName: "Get",
+                new KernelArguments()
+                {
+                    {"uri", url }
+                });
 
-        protected async Task<string> GetHtml(string url)
-        {
-            var html = await _restApiClient.SendAsync<string>(url, HttpMethod.Get);
             return html;
         }
 
