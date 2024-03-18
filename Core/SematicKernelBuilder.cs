@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.KernelMemory;
 using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.Plugins.Core;
 using OpenAIExtensions.HttpClients;
 
 namespace OpenAIExtensions
@@ -138,6 +139,19 @@ namespace OpenAIExtensions
             where TPlugin : class
         {
             _kernelBuilder.Plugins.AddFromType<TPlugin>(pluginName);
+            return this;
+        }
+
+        public SematicKernelBuilder AddDefaultPlugins()
+        {
+            _kernelBuilder.Plugins.AddFromType<ConversationSummaryPlugin>();
+            _kernelBuilder.Plugins.AddFromType<FileIOPlugin>();
+            _kernelBuilder.Plugins.AddFromType<HttpPlugin>();
+            _kernelBuilder.Plugins.AddFromType<MathPlugin>();
+            _kernelBuilder.Plugins.AddFromType<TextPlugin>();
+            _kernelBuilder.Plugins.AddFromType<HttpPlugin>();
+            _kernelBuilder.Plugins.AddFromType<TimePlugin>();
+            _kernelBuilder.Plugins.AddFromType<WaitPlugin>();
             return this;
         }
 
