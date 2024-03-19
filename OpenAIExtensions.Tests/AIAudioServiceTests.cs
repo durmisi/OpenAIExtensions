@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.SemanticKernel;
 using OpenAIExtensions.Services;
+using System.Text;
 using Xunit.Abstractions;
 
 namespace OpenAIExtensions.Tests;
@@ -14,14 +15,15 @@ public class AIAudioServiceTests : IntegrationTestBase
     {
         var logger = CreateLogger<AIAudioService>();
 
-        var endpoint = Configuration.GetValue<string>("OpenAI:AudioService:Endpoint")!;
-        var key = Configuration.GetValue<string>("OpenAI:AudioService:Key")!;
-
         var kernel = Kernel.CreateBuilder()
           .AddAzureOpenAIAudioToText(
               deploymentName: "whisper-001",
-              endpoint: endpoint,
-              apiKey: key)
+              endpoint: Configuration.GetValue<string>("OpenAI:AudioService:Endpoint")!,
+              apiKey: Configuration.GetValue<string>("OpenAI:AudioService:Key")!)
+          .AddAzureOpenAITextToAudio(
+              deploymentName: "tts-1",
+              endpoint: Configuration.GetValue<string>("OpenAI:ImageService:Endpoint")!,
+              apiKey: Configuration.GetValue<string>("OpenAI:ImageService:Key")!)
           .Build();
 
         _audioService = new AIAudioService(kernel, logger);
@@ -38,5 +40,23 @@ public class AIAudioServiceTests : IntegrationTestBase
         Assert.NotEmpty(response);
 
         WriteToConsole(response);
+    }
+
+    [Fact]
+    public async Task AIAudioService_TextToAudio_works_as_expected()
+    {
+        string sampleText = "Hello, my name is John. I am a software engineer. I am working on a project to convert text to audio.";
+
+        //Act
+        var response = await _audioService.TextToAudioAsync(sampleText);
+
+        //Assert
+        Assert.NotNull(response);
+        
+        //Save audio content to a file
+        await File.WriteAllBytesAsync(Path.GetTempFileName(), response.Data!.Value.ToArray());
+
+        WriteToConsole(Encoding.UTF8.GetString(response.Data!.Value.ToArray()));
+
     }
 }

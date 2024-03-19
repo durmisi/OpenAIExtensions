@@ -2,6 +2,7 @@
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.AudioToText;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
+using Microsoft.SemanticKernel.TextToAudio;
 
 namespace OpenAIExtensions.Services
 {
@@ -16,6 +17,11 @@ namespace OpenAIExtensions.Services
         Task<string?> AudioToTextAsync(
              string path,
              OpenAIAudioToTextExecutionSettings? executionSettings = null,
+             CancellationToken ct = default);
+
+        Task<AudioContent?> TextToAudioAsync(
+             string text,
+             OpenAITextToAudioExecutionSettings? executionSettings = null,
              CancellationToken ct = default);
     }
 
@@ -82,6 +88,28 @@ namespace OpenAIExtensions.Services
                 fileName,
                 audioStreamFromFile,
                 executionSettings, ct);
+        }
+
+        public async Task<AudioContent?> TextToAudioAsync(string text,
+            OpenAITextToAudioExecutionSettings? executionSettings = null,
+            CancellationToken ct = default)
+        {
+            // Set execution settings (optional)
+            executionSettings ??= new()
+            {
+                Voice = "alloy", // The voice to use when generating the audio.
+                                 // Supported voices are alloy, echo, fable, onyx, nova, and shimmer.
+                ResponseFormat = "mp3", // The format to audio in.
+                                        // Supported formats are mp3, opus, aac, and flac.
+                Speed = 1.0f // The speed of the generated audio.
+                             // Select a value from 0.25 to 4.0. 1.0 is the default.
+            };
+
+            var textToAudioService = _kernel.GetRequiredService<ITextToAudioService>();
+            var audioContent = await textToAudioService.GetAudioContentAsync(text, executionSettings, cancellationToken: ct);
+
+            return audioContent;
+
         }
     }
 }
