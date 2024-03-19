@@ -9,7 +9,7 @@ namespace OpenAIExtensions
     {
         public static void AddOpenAI(this IServiceCollection services)
         {
-            services.AddScoped<IAIAudioService,AIAudioService>();
+            services.AddScoped<IAIAudioService, AIAudioService>();
             services.AddScoped<IAIConversationManager, AIConversationManager>();
             services.AddScoped<IAIImageService, AIImageService>();
             services.AddScoped<AITranslationService, AITranslationService>();

@@ -7,7 +7,7 @@ namespace OpenAIExtensions.Tools
 {
     public abstract partial class WebSearchPlugin
     {
-        protected async Task<string> GetHtml(Kernel kernel, string url)
+        protected async Task<string?> GetHtml(Kernel kernel, string url)
         {
             var html = await kernel.InvokeAsync<string>(pluginName: nameof(HttpPlugin),
                 functionName: "Get",
@@ -25,7 +25,7 @@ namespace OpenAIExtensions.Tools
 
             htmlString = RegexCss().Replace(htmlString, string.Empty);
             htmlString = Regex.Replace(htmlString, htmlTagPattern, string.Empty);
-            htmlString = Regex.Replace(htmlString, @"^\s+$[\r\n]*", "", RegexOptions.Multiline);
+            htmlString = RegexNewLine().Replace(htmlString, "");
             htmlString = htmlString.Replace("&nbsp;", string.Empty);
 
             return htmlString;
@@ -34,12 +34,15 @@ namespace OpenAIExtensions.Tools
         [GeneratedRegex("(\\<script(.+?)\\</script\\>)|(\\<style(.+?)\\</style\\>)", RegexOptions.IgnoreCase | RegexOptions.Singleline, "en-US")]
         private static partial Regex RegexCss();
 
-        protected HtmlDocument LoadHtml(string html)
+        protected static HtmlDocument LoadHtml(string html)
         {
             HtmlDocument doc = new();
             doc.LoadHtml(html);
 
             return doc;
         }
+
+        [GeneratedRegex(@"^\s+$[\r\n]*", RegexOptions.Multiline)]
+        private static partial Regex RegexNewLine();
     }
 }

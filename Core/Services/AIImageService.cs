@@ -38,7 +38,7 @@ namespace OpenAIExtensions.Services
                 new ImageContent(new Uri(rawImageUrl))
             });
 
-            var chatCompletionService = _kernel.GetRequiredService<IChatCompletionService>();   
+            var chatCompletionService = _kernel.GetRequiredService<IChatCompletionService>();
             var reply = await chatCompletionService.GetChatMessageContentAsync(chatHistory, cancellationToken: ct);
 
             if (!string.IsNullOrEmpty(reply.Content))

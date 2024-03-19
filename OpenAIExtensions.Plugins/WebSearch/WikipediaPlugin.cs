@@ -16,6 +16,12 @@ namespace OpenAIExtensions.Plugins.WebSearch
         )
         {
             var html = await GetHtml(kernel, $"https://en.wikipedia.org/wiki/{query.Trim()}");
+
+            if (string.IsNullOrEmpty(html))
+            {
+                return "";
+            }
+
             var doc = LoadHtml(html);
 
             var sb = new StringBuilder();
@@ -23,6 +29,7 @@ namespace OpenAIExtensions.Plugins.WebSearch
             {
                 sb.AppendLine(node.InnerHtml);
             }
+
             string plainText = GetPlainTextFromHtml(sb.ToString());
 
             return plainText.Substring(0, ContentLenght);

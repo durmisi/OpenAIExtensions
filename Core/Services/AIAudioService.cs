@@ -83,6 +83,5 @@ namespace OpenAIExtensions.Services
                 audioStreamFromFile,
                 executionSettings, ct);
         }
-
     }
 }

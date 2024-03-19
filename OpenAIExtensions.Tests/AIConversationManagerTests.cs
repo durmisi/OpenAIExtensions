@@ -63,7 +63,7 @@ public class AIConversationManagerTests : IntegrationTestBase
         //Arrange
 
         var history = new ChatHistory();
-        
+
         var systemMessage = @"
             You are an AI bot that only knows how to answer questions about weather or forward user questions to wikipedia and return the answers.
             Always respond with text.

@@ -17,7 +17,6 @@ public class AIImageServiceTests : IntegrationTestBase
         var endpoint = Configuration.GetValue<string>("OpenAI:ImageService:Endpoint")!;
         var key = Configuration.GetValue<string>("OpenAI:ImageService:Key")!;
 
-
         var kernel = SematicKernelBuilder.Create()
             .AddAIChatCompletion(endpoint: endpoint, apiKey: key, deploymentName: "gpt-4-vision-preview")
             .Build();
