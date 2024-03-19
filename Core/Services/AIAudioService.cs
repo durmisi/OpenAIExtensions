@@ -1,18 +1,22 @@
-﻿using Azure;
-using Azure.AI.OpenAI;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.AudioToText;
+using Microsoft.SemanticKernel.Connectors.OpenAI;
 
 namespace OpenAIExtensions.Services
 {
     public interface IAIAudioService
     {
-        Task<AudioTranscription?> TranscribeAsync(string fileName, Stream audioStream);
+        Task<string?> AudioToTextAsync(
+            string fileName,
+            Stream audioStream,
+            OpenAIAudioToTextExecutionSettings? executionSettings = null,
+            CancellationToken ct = default);
 
-        Task<AudioTranscription?> TranscribeAsync(string path);
-
-        Task<AudioTranslation?> TranslateAsync(string path);
-
-        Task<AudioTranslation?> TranslateAsync(string fileName, Stream audioStream);
+        Task<string?> AudioToTextAsync(
+             string path,
+             OpenAIAudioToTextExecutionSettings? executionSettings = null,
+             CancellationToken ct = default);
     }
 
     /// <summary>
@@ -20,44 +24,50 @@ namespace OpenAIExtensions.Services
     /// </summary>
     public class AIAudioService : IAIAudioService
     {
-        private readonly OpenAIClient _client;
-
+        private readonly Kernel _kernel;
         private readonly ILogger<AIAudioService> _logger;
 
-        private readonly string _deploymentName = "whisper-001";
-
         public AIAudioService(
-            IAIBroker aIBroker,
-            ILogger<AIAudioService> logger,
-            string? deploymentName = null)
+            Kernel kernel,
+            ILogger<AIAudioService> logger)
         {
+            _kernel = kernel;
             _logger = logger;
-            _client = aIBroker.GetClient();
-
-            if (!string.IsNullOrEmpty(deploymentName))
-            {
-                _deploymentName = deploymentName;
-            }
         }
 
-        public async Task<AudioTranscription?> TranscribeAsync(string fileName, Stream audioStream)
+        public async Task<string?> AudioToTextAsync(
+            string audioFilename,
+            Stream audioStream,
+            OpenAIAudioToTextExecutionSettings? executionSettings = null,
+            CancellationToken ct = default)
         {
-            var transcriptionOptions = new AudioTranscriptionOptions()
+            AudioContent audioContent = new(BinaryData.FromStream(audioStream));
+
+            var audioToTextService = _kernel.GetRequiredService<IAudioToTextService>();
+
+            executionSettings ??= new(audioFilename)
             {
-                DeploymentName = _deploymentName,
-                AudioData = BinaryData.FromStream(audioStream),
-                ResponseFormat = AudioTranscriptionFormat.Verbose,
-                Filename = fileName
+                Prompt = null, // An optional text to guide the model's style or continue a previous audio segment.
+                               // The prompt should match the audio language.
+                Language = "en", // The language of the audio data as two-letter ISO-639-1 language code (e.g. 'en' or 'es').
+                ResponseFormat = "text", // The format to return the transcribed text in.
+                                         // Supported formats are json, text, srt, verbose_json, or vtt. Default is 'json'.
+                Temperature = 0.3f, // The randomness of the generated text.
+                                    // Select a value from 0.0 to 1.0. 0 is the default.
             };
 
-            Response<AudioTranscription> transcriptionResponse
-                = await _client.GetAudioTranscriptionAsync(transcriptionOptions);
+            var textContent = await audioToTextService.GetTextContentAsync(
+                audioContent,
+                executionSettings: executionSettings,
+                cancellationToken: ct);
 
-            var transcription = transcriptionResponse.Value;
-            return transcription;
+            return textContent.Text;
         }
 
-        public async Task<AudioTranscription?> TranscribeAsync(string path)
+        public async Task<string?> AudioToTextAsync(
+            string path,
+            OpenAIAudioToTextExecutionSettings? executionSettings = null,
+            CancellationToken ct = default)
         {
             if (string.IsNullOrEmpty(path))
             {
@@ -68,36 +78,11 @@ namespace OpenAIExtensions.Services
 
             using Stream audioStreamFromFile = File.OpenRead(path);
 
-            return await TranscribeAsync(fileName, audioStreamFromFile);
+            return await AudioToTextAsync(
+                fileName,
+                audioStreamFromFile,
+                executionSettings, ct);
         }
 
-        public async Task<AudioTranslation?> TranslateAsync(string path)
-        {
-            if (string.IsNullOrEmpty(path))
-            {
-                throw new ArgumentException($"'{nameof(path)}' cannot be null or empty.", nameof(path));
-            }
-
-            var fileName = Path.GetFileName(path);
-
-            using Stream audioStreamFromFile = File.OpenRead(path);
-
-            return await TranslateAsync(fileName, audioStreamFromFile);
-        }
-
-        public async Task<AudioTranslation?> TranslateAsync(string fileName, Stream audioStream)
-        {
-            var translationOptions = new AudioTranslationOptions()
-            {
-                DeploymentName = _deploymentName,
-                AudioData = BinaryData.FromStream(audioStream),
-                ResponseFormat = AudioTranslationFormat.Verbose,
-                Filename = fileName
-            };
-
-            Response<AudioTranslation> translationResponse = await _client.GetAudioTranslationAsync(translationOptions);
-
-            return translationResponse?.Value;
-        }
     }
 }

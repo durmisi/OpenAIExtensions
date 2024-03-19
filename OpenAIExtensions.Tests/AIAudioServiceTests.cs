@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.SemanticKernel;
 using OpenAIExtensions.Services;
 using Xunit.Abstractions;
 
@@ -16,33 +17,27 @@ public class AIAudioServiceTests : IntegrationTestBase
         var endpoint = Configuration.GetValue<string>("OpenAI:AudioService:Endpoint")!;
         var key = Configuration.GetValue<string>("OpenAI:AudioService:Key")!;
 
-        _audioService = new AIAudioService(new AIBroker(endpoint, key), logger);
+        var kernel = Kernel.CreateBuilder()
+          .AddAzureOpenAIAudioToText(
+              deploymentName: "whisper-001",
+              endpoint: endpoint,
+              apiKey: key)
+          .Build();
+
+        _audioService = new AIAudioService(kernel, logger);
     }
 
     [Fact]
-    public async Task AIAudioService_Transcribe_mp4_files()
+    public async Task AIAudioService_AudioToText_works_for_mp4_files()
     {
         //Act
-        var response = await _audioService.TranscribeAsync("Content/18-13-52.m4a");
-        
+        var response = await _audioService.AudioToTextAsync("Content/18-13-52.m4a");
+
         //Assert
         Assert.NotNull(response);
-        Assert.NotEmpty(response.Language);
-        Assert.NotEmpty(response.Text);
+        Assert.NotEmpty(response);
 
-        WriteToConsole(response.Text);
+        WriteToConsole(response);
     }
 
-    [Fact]
-    public async Task AIAudioService_Translate_mp4_files()
-    {
-        //Act
-        var audioTranslation = await _audioService.TranslateAsync("Content/18-13-52.m4a");
-
-        //Assert
-        Assert.NotNull(audioTranslation?.Language);
-        Assert.NotNull(audioTranslation?.Text);
-
-        WriteToConsole(audioTranslation.Text);
-    }
 }
