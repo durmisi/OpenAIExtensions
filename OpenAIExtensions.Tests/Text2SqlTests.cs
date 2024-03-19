@@ -17,7 +17,11 @@ namespace OpenAIExtensions.Tests
             var endpoint = Configuration.GetValue<string>("OpenAI:Endpoint")!;
             var key = Configuration.GetValue<string?>("OpenAI:Key")!;
 
-            _aiProcessingService = new AISqlGenerator(endpoint, key, logger);
+            var kernel = SematicKernelBuilder.Create()
+                .AddAIChatCompletion(endpoint, key)
+                .Build();
+
+            _aiProcessingService = new AISqlGenerator(kernel, logger);
 
             _outputHelper = outputHelper;
         }

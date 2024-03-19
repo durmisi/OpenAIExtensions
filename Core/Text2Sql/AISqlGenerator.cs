@@ -14,41 +14,8 @@ namespace OpenAIExtensions.Text2Sql
 
     public class AISqlGenerator : IAISqlGenerator
     {
-        private readonly IChatCompletionService _chatCompletionService;
-
+        private readonly Kernel _kernel;
         private readonly ILogger<AISqlGenerator> _logger;
-
-        private readonly string _deploymentName = "gpt-35-turbo-0613";
-
-        public AISqlGenerator(
-            string endpoint,
-            string apiKey,
-            ILogger<AISqlGenerator> logger,
-            string? deploymentName = null)
-        {
-            if (string.IsNullOrEmpty(endpoint))
-            {
-                throw new ArgumentException($"'{nameof(endpoint)}' cannot be null or empty.", nameof(endpoint));
-            }
-
-            if (string.IsNullOrEmpty(apiKey))
-            {
-                throw new ArgumentException($"'{nameof(apiKey)}' cannot be null or empty.", nameof(apiKey));
-            }
-
-            ArgumentNullException.ThrowIfNull(logger);
-
-            _deploymentName = !string.IsNullOrEmpty(deploymentName)
-                ? deploymentName
-                : _deploymentName;
-
-            var kernel = SematicKernelBuilder.Create()
-                .AddAIChatCompletion(endpoint, apiKey, _deploymentName)
-                .Build();
-
-            _chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
-            _logger = logger;
-        }
 
         public AISqlGenerator(
             Kernel kernel,
@@ -57,7 +24,7 @@ namespace OpenAIExtensions.Text2Sql
             ArgumentNullException.ThrowIfNull(kernel);
             ArgumentNullException.ThrowIfNull(logger);
 
-            _chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
+            _kernel = kernel;
             _logger = logger;
         }
 
@@ -176,7 +143,8 @@ namespace OpenAIExtensions.Text2Sql
                     Temperature = 0
                 };
 
-                var result = await _chatCompletionService.GetChatMessageContentAsync(chatHistory, openAIPromptExecutionSettings);
+                var chatCompletionService = _kernel.GetRequiredService<IChatCompletionService>();
+                var result = await chatCompletionService.GetChatMessageContentAsync(chatHistory, openAIPromptExecutionSettings);
 
                 return result.Content!;
             }
