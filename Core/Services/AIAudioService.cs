@@ -92,7 +92,7 @@ namespace OpenAIExtensions.Services
                 DeploymentName = _deploymentName,
                 AudioData = BinaryData.FromStream(audioStream),
                 ResponseFormat = AudioTranslationFormat.Verbose,
-                Filename = fileName,
+                Filename = fileName
             };
 
             Response<AudioTranslation> translationResponse = await _client.GetAudioTranslationAsync(translationOptions);

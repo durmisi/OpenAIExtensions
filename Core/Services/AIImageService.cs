@@ -1,11 +1,12 @@
-﻿using Azure.AI.OpenAI;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.ChatCompletion;
 
 namespace OpenAIExtensions.Services
 {
     public interface IAIImageService
     {
-        Task<string?> DescribeAsync(string rawImageUrl);
+        Task<string?> DescribeAsync(string rawImageUrl, CancellationToken ct = default);
     }
 
     /// <summary>
@@ -13,50 +14,36 @@ namespace OpenAIExtensions.Services
     /// </summary>
     public class AIImageService : IAIImageService
     {
-        private readonly OpenAIClient _client;
+        private readonly Kernel _kernel;
 
         private readonly ILogger<AIImageService> _logger;
 
-        private readonly string _deploymentName = "gpt-4-vision-preview";
-
         public AIImageService(
-            IAIBroker aIBroker,
-            ILogger<AIImageService> logger, string? deploymentName = null)
+            Kernel kernel,
+            ILogger<AIImageService> logger)
         {
+            _kernel = kernel;
             _logger = logger;
-            _client = aIBroker.GetClient();
-
-            if (!string.IsNullOrEmpty(deploymentName))
-            {
-                _deploymentName = deploymentName;
-            }
         }
 
-        public async Task<string?> DescribeAsync(string rawImageUrl)
+        public async Task<string?> DescribeAsync(string rawImageUrl, CancellationToken ct = default)
         {
-            ChatCompletionsOptions chatCompletionsOptions = new()
-            {
-                DeploymentName = _deploymentName,
-                Messages =
-                {
-                    new ChatRequestSystemMessage("You are a helpful assistant that describes images."),
-                    new ChatRequestUserMessage(
-                        new ChatMessageTextContentItem("Hi! Please describe this image"),
-                        new ChatMessageImageContentItem(new Uri(rawImageUrl))),
-                },
-            };
+            var chatHistory = new ChatHistory();
 
-            var chatResponse = await _client.GetChatCompletionsAsync(chatCompletionsOptions);
+            chatHistory.AddSystemMessage("You are a friendly assistant that helps decribe images.");
 
-            var choice = chatResponse.Value.Choices.FirstOrDefault();
-            if (choice?.FinishDetails is StopFinishDetails || choice?.FinishReason == CompletionsFinishReason.Stopped)
+            chatHistory.AddUserMessage(new ChatMessageContentItemCollection
             {
-                return choice.Message.Content;
-            }
+                new TextContent("What is this image?"),
+                new ImageContent(new Uri(rawImageUrl))
+            });
 
-            if (!string.IsNullOrEmpty(choice?.Message?.Content))
+            var chatCompletionService = _kernel.GetRequiredService<IChatCompletionService>();   
+            var reply = await chatCompletionService.GetChatMessageContentAsync(chatHistory, cancellationToken: ct);
+
+            if (!string.IsNullOrEmpty(reply.Content))
             {
-                return choice.Message.Content;
+                return reply.Content;
             }
 
             return null;

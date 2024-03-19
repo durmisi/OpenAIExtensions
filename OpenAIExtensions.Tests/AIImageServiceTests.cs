@@ -17,7 +17,12 @@ public class AIImageServiceTests : IntegrationTestBase
         var endpoint = Configuration.GetValue<string>("OpenAI:ImageService:Endpoint")!;
         var key = Configuration.GetValue<string>("OpenAI:ImageService:Key")!;
 
-        _imageService = new AIImageService(new AIBroker(endpoint, key), logger);
+
+        var kernel = SematicKernelBuilder.Create()
+            .AddAIChatCompletion(endpoint: endpoint, apiKey: key, deploymentName: "gpt-4-vision-preview")
+            .Build();
+
+        _imageService = new AIImageService(kernel, logger);
         _outputHelper = outputHelper;
     }
 
@@ -32,6 +37,6 @@ public class AIImageServiceTests : IntegrationTestBase
         Assert.NotEmpty(response);
         Assert.Contains("Stone bridge".ToLower(), response.ToLower());
 
-        _outputHelper.WriteLine(response);
+        WriteToConsole(response);
     }
 }

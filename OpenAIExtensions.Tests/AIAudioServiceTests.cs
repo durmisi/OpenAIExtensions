@@ -24,11 +24,13 @@ public class AIAudioServiceTests : IntegrationTestBase
     {
         //Act
         var response = await _audioService.TranscribeAsync("Content/18-13-52.m4a");
-
+        
         //Assert
         Assert.NotNull(response);
         Assert.NotEmpty(response.Language);
         Assert.NotEmpty(response.Text);
+
+        WriteToConsole(response.Text);
     }
 
     [Fact]
@@ -40,5 +42,7 @@ public class AIAudioServiceTests : IntegrationTestBase
         //Assert
         Assert.NotNull(audioTranslation?.Language);
         Assert.NotNull(audioTranslation?.Text);
+
+        WriteToConsole(audioTranslation.Text);
     }
 }

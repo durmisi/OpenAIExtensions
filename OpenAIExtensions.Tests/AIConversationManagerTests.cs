@@ -63,12 +63,13 @@ public class AIConversationManagerTests : IntegrationTestBase
         //Arrange
 
         var history = new ChatHistory();
-        history.AddUserMessage("Show some facts about North Macedonia,search in wikipedia");
-
+        
         var systemMessage = @"
             You are an AI bot that only knows how to answer questions about weather or forward user questions to wikipedia and return the answers.
             Always respond with text.
         ";
+
+        history.AddUserMessage("Show some facts about North Macedonia, search in wikipedia");
 
         //Act
         var response = await _aiConversationManager.ProcessConversationAsync(history, systemMessage);

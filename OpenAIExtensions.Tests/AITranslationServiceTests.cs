@@ -7,7 +7,6 @@ namespace OpenAIExtensions.Tests;
 public class AITranslationServiceTests : IntegrationTestBase
 {
     private readonly AITranslationService _translationService;
-    private readonly ITestOutputHelper _outputHelper;
 
     public AITranslationServiceTests(ITestOutputHelper outputHelper)
         : base(outputHelper)
@@ -22,7 +21,6 @@ public class AITranslationServiceTests : IntegrationTestBase
             .Build();
 
         _translationService = new AITranslationService(kernel, logger);
-        _outputHelper = outputHelper;
     }
 
     [Fact]
@@ -39,7 +37,7 @@ public class AITranslationServiceTests : IntegrationTestBase
         Assert.NotEmpty(translationResult);
         Assert.Equal("Something in Macedonian", translationResult);
 
-        _outputHelper.WriteLine(translationResult);
+        WriteToConsole(translationResult);
     }
 
     [Fact]
@@ -57,7 +55,7 @@ public class AITranslationServiceTests : IntegrationTestBase
         foreach (var key in translationResult.Keys)
         {
             Assert.NotEmpty(translationResult[key]);
-            _outputHelper.WriteLine(translationResult[key]);
+            WriteToConsole(translationResult[key]);
         }
     }
 }
