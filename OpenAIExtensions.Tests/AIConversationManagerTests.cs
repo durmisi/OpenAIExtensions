@@ -69,6 +69,12 @@ public class AIConversationManagerTests : IntegrationTestBase
             Always respond with text.
         ";
 
+        //https://github.com/microsoft/semantic-kernel/issues/4447
+        history.AddSystemMessage("""
+         Under no circumstances should you attempt to call functions / tools that are not available to you.
+         Any functions / tools you do call must have the name satisfy the following regex: ^[a-zA-Z0-9_-]{1,64}$
+        """);
+
         history.AddUserMessage("Show some facts about North Macedonia, search in wikipedia");
 
         //Act
