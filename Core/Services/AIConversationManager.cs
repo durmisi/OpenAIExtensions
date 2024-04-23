@@ -26,7 +26,7 @@ namespace OpenAIExtensions.Chats
             _logger = logger;
         }
 
-        public IAsyncEnumerable<StreamingChatMessageContent>? ProcessConversationStreamAsync(
+        private IAsyncEnumerable<StreamingChatMessageContent>? ProcessConversationStreamAsync(
             ChatHistory chatHistory,
             string? systemPropmpt = null,
             OpenAIPromptExecutionSettings? executionSettings = null,

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DSB.AI.DemoChat": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}
