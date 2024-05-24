@@ -7,6 +7,8 @@ namespace OpenAIExtensions.Services
 {
     public interface IAITextService
     {
+        public Task<string> Summarize(string input, CancellationToken ct = default);
+        public Task<string> ChangeVoiceToEmotional(string input, CancellationToken ct = default);
         public Task<string> Brainstorm(string input, CancellationToken ct = default);
     }
 
@@ -99,5 +101,47 @@ namespace OpenAIExtensions.Services
             return responseMessage;
         }
 
+        public async Task<string> Summarize(string input, CancellationToken ct = default)
+        {
+            string prompt = $@"
+                You are a helpful assistant.
+
+                Title: Summarizing Text
+
+                Description: In this prompt, we aim to generate a concise summary of the provided text. Summarization involves condensing the main points and key information of the text into a shorter form while retaining its essence and meaning.
+
+                User Text: {input}
+
+                Please generate a summary of the provided text. Focus on capturing the main ideas, key points, and important details while keeping the summary brief and easy to understand.
+
+                Feel free to experiment with different summarization techniques and approaches to produce an accurate and effective summary that effectively conveys the essence of the original text.
+
+                    ";
+
+            var chatCompletionService = _kernel.GetRequiredService<IChatCompletionService>();
+
+            var chatHistory = new ChatHistory();
+
+            chatHistory.AddUserMessage(prompt);
+
+            var executionSettings = new OpenAIPromptExecutionSettings()
+            {
+                MaxTokens = 600,
+                Temperature = 0.5f,
+                FrequencyPenalty = 0.4f,
+                PresencePenalty = 0.4f, 
+                TopP = 0.9f
+            };
+
+            var response = await chatCompletionService
+                .GetChatMessageContentAsync(chatHistory: chatHistory,
+                executionSettings: executionSettings,
+                kernel: _kernel,
+                cancellationToken: ct);
+
+            string responseMessage = response.Content ?? "";
+
+            return responseMessage;
+        }
     }
 }

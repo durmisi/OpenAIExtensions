@@ -69,4 +69,36 @@ it's the ideal way to navigate busy streets and reach your destination quickly."
         WriteToConsole(emotionallyEngagingDescription);
     }
 
+
+    [Fact]
+    public async Task AITextService_Summarize_generates_valid_response()
+    {
+        //Arrange
+        string newsArticle = @"
+            The United Nations said the situation in Yemen was deteriorating by the day,
+            as it warned the war-ravaged country now risked sliding into famine directly
+            attributable to the fact that fighting has moved north, obstructing the delivery
+            of humanitarian aid. According to the UN, the situation is dire: 16.2 million
+            people - more than half the population - are facing crisis levels of hunger and
+            are in need of humanitarian aid, with 5 million people in danger of slipping
+            into famine-like conditions, according to a recent Integrated Food Security
+            Phase Classification (IPC) report, published on Friday. The war has been raging
+            in Yemen since 2014 when Houthi rebels took over the capital Sanaa and much of
+            the country's north, forcing the government to flee to the south, and later to
+            Saudi Arabia, which has since led a coalition fighting the Iran-backed rebels.";
+
+        //Act
+        string summary = await _translationService.Summarize(newsArticle);
+
+        //Assert
+        Assert.NotNull(summary);
+        Assert.NotEmpty(summary);
+
+        WriteToConsole(newsArticle);
+        WriteToConsole(newsArticle.Length.ToString());
+        WriteToConsole("------------------------------------------------");
+        WriteToConsole(summary);
+        WriteToConsole(summary.Length.ToString());
+    }
+
 }
