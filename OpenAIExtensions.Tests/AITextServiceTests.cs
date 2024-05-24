@@ -47,4 +47,26 @@ public class AITextServiceTests : IntegrationTestBase
         WriteToConsole(answer);
     }
 
+
+    [Fact]
+    public async Task AITextService_ChangeVoiceToEmotional_generates_an_emotional_response()
+    {
+        //Arrange
+        string productDescription = @"
+Our new electric scooter is perfect for city commuters. 
+With its lightweight design and long battery life, 
+it's the ideal way to navigate busy streets and reach your destination quickly.";
+
+        //Act
+        var emotionallyEngagingDescription = await _translationService.ChangeVoiceToEmotional(productDescription);
+
+        //Assert
+        Assert.NotNull(emotionallyEngagingDescription);
+        Assert.NotEmpty(emotionallyEngagingDescription);
+
+        WriteToConsole(productDescription);
+        WriteToConsole("------------------------------------------------");
+        WriteToConsole(emotionallyEngagingDescription);
+    }
+
 }
