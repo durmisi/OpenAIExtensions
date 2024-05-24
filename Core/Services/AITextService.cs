@@ -32,8 +32,6 @@ namespace OpenAIExtensions.Services
     
                 Here it is: {input}
     
-                It's a [brief description of the idea or its purpose].
-    
                 Can you provide various aspects such as potential challenges, opportunities, innovative angles, and more? I'm looking for detailed suggestions from different perspectives.
             ";
 
