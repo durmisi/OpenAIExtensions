@@ -21,7 +21,13 @@ Now, let's create an instance of the AIConversationManager class in your test or
 This manager orchestrates the conversation between users and the AI system.
 
 ```bash
-// Instantiate AIConversationManager with necessary dependencies
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.SemanticKernel;
+using OpenAIExtensions.Managers;
+using OpenAIExtensions;
+using Microsoft.SemanticKernel.ChatCompletion;
+
 var configuration = new ConfigurationBuilder()
     .AddJsonFile($"appsettings.json")
     .Build();
@@ -33,8 +39,8 @@ var logger = LoggerFactory
 var endpoint = configuration.GetValue<string>("OpenAI:Endpoint")!;
 var key = configuration.GetValue<string>("OpenAI:Key")!;
 
-var kernel = SematicKernelBuilder.Create()
-    .AddAIChatCompletion(endpoint: endpoint, apiKey: key)
+var kernel = Kernel.CreateBuilder()
+    .AddAzureAIChatCompletion(endpoint: endpoint, apiKey: key)
     .AddPlugin<GetCurrentWeatherPlugin>()
     .Build();
 
@@ -52,6 +58,13 @@ var systemMessage = @"
 
 var response = await aiConversationManager.ProcessConversationAsync(history, systemMessage);
 
-response => The weather in Skopje today is partly cloudy with a high of 15°C.
+var systemMessage = @"
+    You are an AI bot that only knows how to answer questions about weather.
+    Always respond with text.
+";
+
+var response = await aiConversationManager.ProcessConversationAsync(history, systemMessage);
+
+response => The weather in Skopje today is partly cloudy with a high of 15Â°C.
 
 ```
