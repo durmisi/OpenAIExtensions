@@ -4,7 +4,7 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<NoWarn>SKEXP0001,SKEXP0010, SKEXP0011, SKEXP0050</NoWarn>
+		<NoWarn>SKEXP0001,SKEXP0010, SKEXP0011, SKEXP0050, KMEXP00, KMEXP01</NoWarn>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -20,19 +20,19 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Azure.Identity" Version="1.11.1" />
+		<PackageReference Include="Azure.Identity" Version="1.11.3" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
-		<PackageReference Include="Microsoft.KernelMemory.SemanticKernelPlugin" Version="0.36.240416.1" />
+		<PackageReference Include="Microsoft.KernelMemory.SemanticKernelPlugin" Version="0.61.240524.1" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.SemanticKernel.Abstractions" Version="1.7.1" />
-		<PackageReference Include="Microsoft.SemanticKernel.Core" Version="1.7.1" />
-		<PackageReference Include="Microsoft.SemanticKernel.Connectors.OpenAI" Version="1.7.1" />
+		<PackageReference Include="Microsoft.SemanticKernel.Abstractions" Version="1.13.0" />
+		<PackageReference Include="Microsoft.SemanticKernel.Core" Version="1.13.0" />
+		<PackageReference Include="Microsoft.SemanticKernel.Connectors.OpenAI" Version="1.13.0" />
 		<PackageReference Include="Microsoft.SemanticKernel.Plugins.Core" Version="1.6.2-alpha" />
 		<PackageReference Include="Microsoft.SemanticKernel.Plugins.Memory" Version="1.6.2-alpha" />
-		<PackageReference Include="Microsoft.KernelMemory.Abstractions" Version="0.36.240416.1" />
-		<PackageReference Include="Microsoft.KernelMemory.Core" Version="0.36.240416.1" />
+		<PackageReference Include="Microsoft.KernelMemory.Abstractions" Version="0.61.240524.1" />
+		<PackageReference Include="Microsoft.KernelMemory.Core" Version="0.61.240524.1" />
 		<PackageReference Include="KernelMemory.MemoryStorage.SqlServer" Version="1.6.3" />
 		<PackageReference Include="Microsoft.SemanticKernel.Plugins.Web" Version="1.6.2-alpha" />
 		<PackageReference Include="SemanticKernel.Connectors.Memory.SqlServer" Version="1.6.3" />

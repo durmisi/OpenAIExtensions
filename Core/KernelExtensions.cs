@@ -46,5 +46,20 @@ namespace OpenAIExtensions
 
             return kernelMemory;
         }
+
+
+        public static async Task<IKernelMemory> AddSimpleVectorDb(
+           this Kernel kernel,
+           string endpoint,
+           string apiKey,
+           CancellationToken ct = default)
+        {
+            var kernelMemory = KernelMemoryExtensions.WithSimpleVectorDb(endpoint,apiKey);
+
+            //MemoryPlugin
+            kernel.ImportPluginFromObject(new MemoryPlugin(kernelMemory, waitForIngestionToComplete: true), "memory");
+
+            return kernelMemory;
+        }
     }
 }

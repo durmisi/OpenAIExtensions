@@ -4,7 +4,6 @@ using Microsoft.KernelMemory;
 using Microsoft.KernelMemory.AI;
 using Microsoft.KernelMemory.AI.AzureOpenAI;
 using Microsoft.KernelMemory.AI.OpenAI;
-using Microsoft.SemanticKernel;
 
 namespace OpenAIExtensions
 {
@@ -43,8 +42,26 @@ namespace OpenAIExtensions
             return kernelMemory!;
         }
 
+
+        public static IKernelMemory WithSimpleVectorDb(string endpoint, string apiKey)
+        {
+            var kernelMemoryBuilder = new KernelMemoryBuilder()
+               .WithAzureOpenAIDefaults(
+               endpoint,
+               apiKey);
+
+            var kernelMemory = kernelMemoryBuilder
+                .WithSimpleVectorDb(new Microsoft.KernelMemory.MemoryStorage.DevTools.SimpleVectorDbConfig()
+                {
+                    StorageType = Microsoft.KernelMemory.FileSystem.DevTools.FileSystemTypes.Volatile
+                })
+                .Build<MemoryServerless>();
+
+            return kernelMemory!;
+        }
+
         public static IKernelMemoryBuilder WithAzureOpenAIDefaults(
-            this IKernelMemoryBuilder builder,
+            this IKernelMemoryBuilder kernelMemoryBuilder,
             string endpoint,
             string apiKey,
             ITextTokenizer? textGenerationTokenizer = null,
@@ -78,14 +95,21 @@ namespace OpenAIExtensions
 
             textEmbbedingAIConfig.Validate();
             textGenerationAIConfig.Validate();
-            builder.Services.AddAzureOpenAIEmbeddingGeneration(textEmbbedingAIConfig, textEmbeddingTokenizer, httpClient);
-            builder.Services.AddAzureOpenAITextGeneration(textGenerationAIConfig, textGenerationTokenizer, httpClient);
-            if (!onlyForRetrieval)
-            {
-                builder.AddIngestionEmbeddingGenerator(new AzureOpenAITextEmbeddingGenerator(textEmbbedingAIConfig, textEmbeddingTokenizer, loggerFactory, httpClient));
-            }
 
-            return builder;
+            //ITextEmbeddingGeneration
+            kernelMemoryBuilder.WithAzureOpenAITextEmbeddingGeneration(
+                textEmbbedingAIConfig,
+                textEmbeddingTokenizer,
+                onlyForRetrieval: onlyForRetrieval,
+                httpClient: httpClient);
+
+            //ITextGeneration
+            kernelMemoryBuilder.WithAzureOpenAITextGeneration(
+                textGenerationAIConfig,
+                textGenerationTokenizer,
+                httpClient);
+
+            return kernelMemoryBuilder;
         }
     }
 }
