@@ -1,7 +1,7 @@
 ﻿using Microsoft.SemanticKernel;
 using System.ComponentModel;
 
-namespace OpenAIExtensions.Plugins.Demo
+namespace OpenAIExtensions.Tests.Plugins
 {
     public sealed class GetCurrentWeatherPlugin
     {

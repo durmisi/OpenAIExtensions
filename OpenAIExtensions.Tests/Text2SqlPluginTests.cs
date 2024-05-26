@@ -1,27 +1,29 @@
 using Microsoft.Extensions.Configuration;
-using OpenAIExtensions.Text2Sql;
+using Microsoft.SemanticKernel;
+using OpenAIExtensions.Plugins.Text2Sql;
+using OpenAIExtensions.Tests.Base;
 using Xunit.Abstractions;
 
 namespace OpenAIExtensions.Tests
 {
-    public class Text2SqlTests : IntegrationTestBase
+    public class Text2SqlPluginTests : IntegrationTestBase
     {
-        private readonly AISqlGenerator _aiProcessingService;
+        private readonly Kernel _kernel;
         private readonly ITestOutputHelper _outputHelper;
 
-        public Text2SqlTests(ITestOutputHelper outputHelper)
+        public Text2SqlPluginTests(ITestOutputHelper outputHelper)
             : base(outputHelper)
         {
-            var logger = CreateLogger<AISqlGenerator>();
+            var logger = CreateLogger<Text2SqlPluginTests>();
 
             var endpoint = Configuration.GetValue<string>("OpenAI:Endpoint")!;
             var key = Configuration.GetValue<string?>("OpenAI:Key")!;
 
-            var kernel = SematicKernelBuilder.Create()
-                .AddAIChatCompletion(endpoint, key)
+             _kernel = Kernel.CreateBuilder()
+                .AddAzureAIChatCompletion(endpoint, key)
+                .AddPlugin<Text2SqlPlugin>()
                 .Build();
 
-            _aiProcessingService = new AISqlGenerator(kernel, logger);
 
             _outputHelper = outputHelper;
         }
@@ -34,9 +36,18 @@ namespace OpenAIExtensions.Tests
 
             //Act
             string naturalQuery = "Find all Customers where Name starts with Adm, ignore case";
-            string sqlQuery = await _aiProcessingService.TranslateToSqlQueryAsync(naturalQuery, context);
+            var functionResult = await _kernel.InvokeAsync(nameof(Text2SqlPlugin), "TranslateToSqlQuery", new KernelArguments()
+            {
+                {"naturalQuery", naturalQuery},
+                {"context", context},
+            });
+
 
             //Assert
+            Assert.NotNull(functionResult);
+
+            var sqlQuery = functionResult.GetValue<string>();
+
             _outputHelper.WriteLine(naturalQuery);
             _outputHelper.WriteLine(sqlQuery);
 

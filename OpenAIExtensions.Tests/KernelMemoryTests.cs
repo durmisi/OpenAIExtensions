@@ -3,7 +3,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.KernelMemory;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
-using OpenAIExtensions.Chats;
+using OpenAIExtensions.Managers;
+using OpenAIExtensions.Tests.Base;
 using Testcontainers.MsSql;
 using Xunit.Abstractions;
 
@@ -95,8 +96,8 @@ public class KernelMemoryTests : IntegrationTestBase, IAsyncLifetime
         var endpoint = Configuration.GetValue<string>("OpenAI:Endpoint")!;
         var apiKey = Configuration.GetValue<string>("OpenAI:Key")!;
 
-        _kernel = SematicKernelBuilder.Create()
-            .AddAIChatCompletion(endpoint: endpoint, apiKey: apiKey)
+        _kernel = Kernel.CreateBuilder()
+            .AddAzureAIChatCompletion(endpoint: endpoint, apiKey: apiKey)
             .AddAITextEmbeddingGeneration(endpoint: endpoint, apiKey: apiKey)
             .Build();
 

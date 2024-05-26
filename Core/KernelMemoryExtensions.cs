@@ -16,7 +16,7 @@ namespace OpenAIExtensions
         public string? Schema { get; set; }
     }
 
-    public static class KernelMemoryFactory
+    public static class KernelMemoryExtensions
     {
         public static IKernelMemory WithSqlServerMemoryDb(CreateKernelMemoryRequest request)
         {

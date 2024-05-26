@@ -1,21 +1,23 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.SemanticKernel;
-using OpenAIExtensions.Services;
+using OpenAIExtensions.Plugins.Audio;
+using OpenAIExtensions.Tests.Base;
 using System.Text;
 using Xunit.Abstractions;
 
 namespace OpenAIExtensions.Tests;
 
-public class AIAudioServiceTests : IntegrationTestBase
+public class AudioPluginTests : IntegrationTestBase
 {
-    private readonly AIAudioService _audioService;
+    private Kernel _kernel;
 
-    public AIAudioServiceTests(ITestOutputHelper outputHelper)
+    public AudioPluginTests(ITestOutputHelper outputHelper)
         : base(outputHelper)
     {
-        var logger = CreateLogger<AIAudioService>();
+        var logger = CreateLogger<AudioPluginTests>();
 
-        var kernel = Kernel.CreateBuilder()
+        _kernel = Kernel.CreateBuilder()
+            .AddPlugin<AudioPlugin>()
           .AddAzureOpenAIAudioToText(
               deploymentName: "whisper-001",
               endpoint: Configuration.GetValue<string>("OpenAI:AudioService:Endpoint")!,
@@ -26,16 +28,25 @@ public class AIAudioServiceTests : IntegrationTestBase
               apiKey: Configuration.GetValue<string>("OpenAI:ImageService:Key")!)
           .Build();
 
-        _audioService = new AIAudioService(kernel, logger);
     }
 
     [Fact]
     public async Task AIAudioService_AudioToText_works_for_mp4_files()
     {
         //Act
-        var response = await _audioService.AudioToTextAsync("Content/18-13-52.m4a");
+        var funtionResult = await _kernel.InvokeAsync(nameof(AudioPlugin), "AudioFileToText",
+             new KernelArguments()
+             {
+                 {
+                     "path", "Content/18-13-52.m4a"
+                 }
+        });
 
         //Assert
+        Assert.NotNull(funtionResult);
+
+        var response = funtionResult.GetValue<string>();
+
         Assert.NotNull(response);
         Assert.NotEmpty(response);
 
@@ -48,11 +59,20 @@ public class AIAudioServiceTests : IntegrationTestBase
         string sampleText = "Hello, my name is John. I am a software engineer. I am working on a project to convert text to audio.";
 
         //Act
-        var response = await _audioService.TextToAudioAsync(sampleText);
+        var funtionResult = await _kernel.InvokeAsync(nameof(AudioPlugin),
+            "TextToAudio",
+          new KernelArguments()
+          {
+                 {
+                     "text", sampleText
+                 }
+        });
 
         //Assert
+        Assert.NotNull(funtionResult);
+        var response = funtionResult.GetValue<AudioContent>();
         Assert.NotNull(response);
-        
+
         //Save audio content to a file
         await File.WriteAllBytesAsync(Path.GetTempFileName(), response.Data!.Value.ToArray());
 

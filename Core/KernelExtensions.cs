@@ -17,7 +17,7 @@ namespace OpenAIExtensions
             string? schema = null,
             CancellationToken ct = default)
         {
-            var kernelMemory = KernelMemoryFactory.WithSqlServerMemoryDb(
+            var kernelMemory = KernelMemoryExtensions.WithSqlServerMemoryDb(
                 new CreateKernelMemoryRequest()
                 {
                     Endpoint = endpoint,

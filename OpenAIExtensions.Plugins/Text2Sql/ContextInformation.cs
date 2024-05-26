@@ -1,4 +1,4 @@
-﻿namespace OpenAIExtensions.Text2Sql
+﻿namespace OpenAIExtensions.Plugins.Text2Sql
 {
     public class ContextInformation
     {

@@ -1,36 +1,20 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.SemanticKernel;
+﻿using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
+using System.ComponentModel;
 
-namespace OpenAIExtensions.Text2Sql
+namespace OpenAIExtensions.Plugins.Text2Sql
 {
-    public interface IAISqlGenerator
+
+    public class Text2SqlPlugin
     {
-        ValueTask<string> TranslateToSqlQueryAsync(
-            string naturalQuery,
-            ContextInformation context);
-    }
 
-    public class AISqlGenerator : IAISqlGenerator
-    {
-        private readonly Kernel _kernel;
-        private readonly ILogger<AISqlGenerator> _logger;
-
-        public AISqlGenerator(
-            Kernel kernel,
-            ILogger<AISqlGenerator> logger)
-        {
-            ArgumentNullException.ThrowIfNull(kernel);
-            ArgumentNullException.ThrowIfNull(logger);
-
-            _kernel = kernel;
-            _logger = logger;
-        }
+        [KernelFunction, Description("Translates a native query to SQL code.")]
 
         public async ValueTask<string> TranslateToSqlQueryAsync(
-            string naturalQuery,
-            ContextInformation context)
+            Kernel kernel,
+         [Description("The native query to be translated.")] string naturalQuery,
+         [Description("Information about the context in which the translation is requested.")]   ContextInformation context)
         {
             try
             {
@@ -43,7 +27,9 @@ namespace OpenAIExtensions.Text2Sql
                     Given a SQL db with the following tables:
                     {contextDescription} Translate the following request into SQL query: {naturalQuery}.";
 
-                return await PromptQueryAsync(naturalQueryInput, @$"
+                return await PromptQueryAsync(
+                    kernel,
+                    naturalQueryInput, @$"
                     You are an AI assistant that helping people to translate natural queries to SQL.
                     Always use only the tables and columns specified in the SQL db {contextDescription}.
                     Always select all columns, use database schemas and aliases when possible.
@@ -117,7 +103,10 @@ namespace OpenAIExtensions.Text2Sql
             return contextDescription;
         }
 
-        private async ValueTask<string> PromptQueryAsync(string message, string? assistantMessage = null)
+        private async ValueTask<string> PromptQueryAsync(
+            Kernel kernel,
+            string message,
+            string? assistantMessage = null)
         {
             if (string.IsNullOrWhiteSpace(message))
             {
@@ -143,7 +132,7 @@ namespace OpenAIExtensions.Text2Sql
                     Temperature = 0
                 };
 
-                var chatCompletionService = _kernel.GetRequiredService<IChatCompletionService>();
+                var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
                 var result = await chatCompletionService.GetChatMessageContentAsync(chatHistory, openAIPromptExecutionSettings);
 
                 return result.Content!;

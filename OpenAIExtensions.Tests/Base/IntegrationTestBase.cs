@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
-namespace OpenAIExtensions.Tests
+namespace OpenAIExtensions.Tests.Base
 {
     public abstract class IntegrationTestBase
     {

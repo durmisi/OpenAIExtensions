@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
-using OpenAIExtensions.Chats;
-using OpenAIExtensions.Plugins.Demo;
+using OpenAIExtensions.Managers;
 using OpenAIExtensions.Plugins.WebSearch;
+using OpenAIExtensions.Tests.Base;
+using OpenAIExtensions.Tests.Plugins;
 using Xunit.Abstractions;
 
 namespace OpenAIExtensions.Tests;
@@ -20,9 +22,8 @@ public class AIConversationManagerTests : IntegrationTestBase
         var endpoint = Configuration.GetValue<string>("OpenAI:Endpoint");
         var key = Configuration.GetValue<string>("OpenAI:Key");
 
-        var kernel = SematicKernelBuilder.Create()
-            .AddAIChatCompletion(endpoint: endpoint, apiKey: key)
-            .AddCorePlugins()
+        var kernel = Kernel.CreateBuilder()
+            .AddAzureAIChatCompletion(endpoint: endpoint, apiKey: key)
             .AddPlugin<GetCurrentWeatherPlugin>()
             .AddPlugin<WikipediaPlugin>()
             .Build();

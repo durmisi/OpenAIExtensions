@@ -1,55 +1,24 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.SemanticKernel;
+﻿using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.AudioToText;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using Microsoft.SemanticKernel.TextToAudio;
+using System.ComponentModel;
 
-namespace OpenAIExtensions.Services
+namespace OpenAIExtensions.Plugins.Audio
 {
-    public interface IAIAudioService
+    public class AudioPlugin
     {
-        Task<string?> AudioToTextAsync(
-            string fileName,
-            Stream audioStream,
-            OpenAIAudioToTextExecutionSettings? executionSettings = null,
-            CancellationToken ct = default);
-
-        Task<string?> AudioToTextAsync(
-             string path,
-             OpenAIAudioToTextExecutionSettings? executionSettings = null,
-             CancellationToken ct = default);
-
-        Task<AudioContent?> TextToAudioAsync(
-             string text,
-             OpenAITextToAudioExecutionSettings? executionSettings = null,
-             CancellationToken ct = default);
-    }
-
-    /// <summary>
-    /// https://drlee.io/transforming-audio-to-text-with-openais-speech-to-text-api-a-practical-step-by-step-guide-8139e4e65fdf
-    /// </summary>
-    public class AIAudioService : IAIAudioService
-    {
-        private readonly Kernel _kernel;
-        private readonly ILogger<AIAudioService> _logger;
-
-        public AIAudioService(
-            Kernel kernel,
-            ILogger<AIAudioService> logger)
-        {
-            _kernel = kernel;
-            _logger = logger;
-        }
-
+        [KernelFunction, Description("Transcribes audio content to text.")]
         public async Task<string?> AudioToTextAsync(
-            string audioFilename,
-            Stream audioStream,
+            Kernel kernel,
+           [Description("The filename of the audio file")] string audioFilename,
+           [Description("The filestream of the audio file")] Stream audioStream,
             OpenAIAudioToTextExecutionSettings? executionSettings = null,
             CancellationToken ct = default)
         {
             AudioContent audioContent = new(BinaryData.FromStream(audioStream));
 
-            var audioToTextService = _kernel.GetRequiredService<IAudioToTextService>();
+            var audioToTextService = kernel.GetRequiredService<IAudioToTextService>();
 
             executionSettings ??= new(audioFilename)
             {
@@ -70,8 +39,10 @@ namespace OpenAIExtensions.Services
             return textContent.Text;
         }
 
-        public async Task<string?> AudioToTextAsync(
-            string path,
+        [KernelFunction, Description("Transcribes audio content to text.")]
+        public async Task<string?> AudioFileToTextAsync(
+            Kernel kernel,
+            [Description("The filename of the audio file")] string path,
             OpenAIAudioToTextExecutionSettings? executionSettings = null,
             CancellationToken ct = default)
         {
@@ -85,12 +56,16 @@ namespace OpenAIExtensions.Services
             using Stream audioStreamFromFile = File.OpenRead(path);
 
             return await AudioToTextAsync(
+                kernel,
                 fileName,
                 audioStreamFromFile,
                 executionSettings, ct);
         }
 
-        public async Task<AudioContent?> TextToAudioAsync(string text,
+        [KernelFunction, Description("Converts text to audio content.")]
+        public async Task<AudioContent?> TextToAudioAsync(
+            Kernel kernel,
+            [Description("The text to convert to audio.")] string text,
             OpenAITextToAudioExecutionSettings? executionSettings = null,
             CancellationToken ct = default)
         {
@@ -105,7 +80,7 @@ namespace OpenAIExtensions.Services
                              // Select a value from 0.25 to 4.0. 1.0 is the default.
             };
 
-            var textToAudioService = _kernel.GetRequiredService<ITextToAudioService>();
+            var textToAudioService = kernel.GetRequiredService<ITextToAudioService>();
             var audioContent = await textToAudioService.GetAudioContentAsync(text, executionSettings, cancellationToken: ct);
 
             return audioContent;
